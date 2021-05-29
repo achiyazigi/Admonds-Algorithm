@@ -190,6 +190,24 @@ public class WGraph_DS implements weighted_graph, Serializable{
             this.highest_key = key;
         }
     }
+    
+    
+    /**
+     * add the given node to the graph.
+     * Note: this method should run in O(1) time.
+     * Note2: if there is already a node with such a key -> no action should be performed.
+     * @param key
+     */
+    public void addNode(node_info n) {
+    	 if(!this.v.containsKey(n.getKey())){   
+             this.v.put(n.getKey(), n);
+             this.e.put(n.getKey(), new HashMap<node_info, edge_info>());
+             this.MC ++;
+         }
+         if(n.getKey() > this.highest_key){
+             this.highest_key = n.getKey();
+         }
+    }
 
     
     /** 

@@ -41,6 +41,14 @@ public interface weighted_graph {
      */
     public void addNode(int key);
     /**
+     * add the given node to the graph.
+     * Note: this method should run in O(1) time.
+     * Note2: if there is already a node with such a key -> no action should be performed.
+     * @param key
+     */
+    public void addNode(node_info n);
+    
+    /**
      * Connect an edge between node1 and node2, with an edge with weight >=0.
      * Note: this method should run in O(1) time.
      * Note2: if the edge node1-node2 already exists - the method simply updates the weight of the edge.

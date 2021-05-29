@@ -1,9 +1,12 @@
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import kotlin.Pair;
 
 
 public class Admonds_Algo_Util {
@@ -20,82 +23,59 @@ public class Admonds_Algo_Util {
      * NOTE! this class temporary changes the graph presented in the gui so its important to reset to original state
      * when its done... e.g. after update_match() and before get_match() called
      */
-    private class SuperNode implements node_info {
+    class SuperNode implements node_info {
+    	
+        private int key;
+        private String info;
+        private double tag;
+        private int x;
+        private int y;
+        private int color = 0;
 
+        private HashSet<edge_info> restored_neighbors = new HashSet<edge_info>();
+        private HashSet<node_info> original_nodes = new HashSet<node_info>();
+        private HashSet<Integer> neighbors = new  HashSet<Integer>();
+        
         SuperNode(List<Integer> keys) {
-
+        	
+        	// set the key
+        	this.key = g.getHighest_key() + 1;
+        	
+        
+        	// save the data of the nodes
+        	for(int node_id : keys) {
+        		
+        		for(node_info nei : g.getV(node_id)) {	// neighbors
+        			this.restored_neighbors.add(g.getEdge(node_id, nei.getKey()));
+        			if(!keys.contains(nei.getKey())) {this.neighbors.add(nei.getKey());}
+        		}
+        		
+	        	this.original_nodes.add(g.getNode(node_id));	// save the node
+	        }
         }
 
         @Override
-        public int getKey() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
+        public int getKey() {return this.key;}
         @Override
-        public String getInfo() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
+        public String getInfo() {return this.info;}
         @Override
-        public void setInfo(String s) {
-            // TODO Auto-generated method stub
-
-        }
-
+        public void setInfo(String s) {this.info = s;}
         @Override
-        public double getTag() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
+        public double getTag() {return this.tag;}
         @Override
-        public void setTag(double t) {
-            // TODO Auto-generated method stub
-
-        }
-
+        public void setTag(double t) {this.tag = t;}
         @Override
-        public void setX(int x) {
-            // TODO Auto-generated method stub
-
-        }
-
+        public void setX(int x) {this.x = x;}
         @Override
-        public void setY(int y) {
-            // TODO Auto-generated method stub
-
-        }
-
+        public void setY(int y) {this.key = y;}
         @Override
-        public int X() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
+        public int X() {return this.x;}
         @Override
-        public int Y() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
+        public int Y() {return this.y;}
         @Override
-        public int getColor() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
+        public int getColor() {return this.color;}
         @Override
-        public void setColor(int color) {
-            // TODO Auto-generated method stub
-
-        }
-
-        public void decompress() {
-
-        }
-
+        public void setColor(int color) {this.color = color;}
     }
 
     
@@ -136,6 +116,36 @@ public class Admonds_Algo_Util {
     HashSet<edge_info> get_match() {
         return this.match;
     }
+    
+    /**
+     * compress the nodes given to a super-node
+     * @param keys
+     */
+    void compress(List<Integer> keys) {
+    	SuperNode sn = new SuperNode(keys);
+ 
+    	g.addNode(sn);	// add to the graph
+    	
+    	for(int n : keys) {g.removeNode(n);}	// remove the nodes
+    	for(int nei : sn.neighbors) {g.connect(sn.getKey(), nei, 0);}	//connect the neighbors
+    }
+    
+    /**
+     * de-compress a super-node to the original nodes
+     * @param sn
+     */
+    public void decompress(SuperNode sn) {
+
+    	for(node_info node : sn.original_nodes) {g.addNode(node);}	// restore the nodes
+    	
+    	for(edge_info e : sn.restored_neighbors) {	// restore all edges
+    		g.connect(e.getNodes().getFirst(), e.getNodes().getSecond(), e.getValue());
+    		if(e.isInMatch()) {g.getEdge(e.getNodes().getFirst(), e.getNodes().getSecond()).setInMatch(true);}
+    	}
+    
+    	g.removeNode(sn.getKey());	// remove the super-node
+    }
+    
 
     void update_match() { // the algorithm!
 
