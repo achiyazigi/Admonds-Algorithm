@@ -16,12 +16,12 @@ public class Admonds_Algo_Util {
     weighted_graph g;
 
     /**
-     * itay, nir
-     * this class compresses an odd cycle into one node
-     * having all the out edges from the original cycle, as out edges of the super node
-     * if multiple out edges have the same dest, only one edge will be considered.
-     * NOTE! this class temporary changes the graph presented in the gui so its important to reset to original state
-     * when its done... e.g. after update_match() and before get_match() called
+     * itay, nir this class compresses an odd cycle into one node having all the out
+     * edges from the original cycle, as out edges of the super node if multiple out
+     * edges have the same dest, only one edge will be considered. NOTE! this class
+     * temporary changes the graph presented in the gui so its important to reset to
+     * original state when its done... e.g. after update_match() and before
+     * get_match() called
      */
     class SuperNode implements node_info {
     	
@@ -78,12 +78,12 @@ public class Admonds_Algo_Util {
         public void setColor(int color) {this.color = color;}
     }
 
-    
     Admonds_Algo_Util(weighted_graph g) {
         this.free = new HashSet<>();
         this.match = new HashSet<>();
         this.init(g);
     }
+
     Admonds_Algo_Util() {
         this.free = new HashSet<>();
         this.match = new HashSet<>();
@@ -96,21 +96,39 @@ public class Admonds_Algo_Util {
     }
 
     /**
-     * setting the free set to correct state after initialization
-     * for example, when init called and edges added after last match update
+     * setting the free set to correct state after initialization for example, when
+     * init called and edges added after last match update
      */
     private void set_free() {
+        this.g.getV().forEach((e) -> {
+            this.free.add(e.getKey());
+        });
+        this.match.forEach((e) -> {
+            this.free.remove(e.getNodes().getFirst());
+            this.free.remove(e.getNodes().getSecond());
+        });
+
     }
 
     /**
-     * setting the match set to correct state after initialization
-     * for example, when init called and edges added after last match update
+     * setting the match set to correct state after initialization for example, when
+     * init called and edges added after last match update
      */
     private void set_match() {
+        this.g.getV().forEach((u) -> {
+            int ukey = u.getKey();
+            this.g.getV(ukey).forEach((v) -> {
+                edge_info e = this.g.getEdge(ukey, v.getKey());
+                if (e.isInMatch()) {
+                    this.match.add(e);
+                }
+            });
+        });
     }
 
     /**
      * return last match calculated in g
+     * 
      * @return
      */
     HashSet<edge_info> get_match() {
@@ -151,7 +169,7 @@ public class Admonds_Algo_Util {
 
         System.out.println("Starting bfs!"); // just fot indication the button pressed...
 
-        while(!this.free.isEmpty()){
+        while (!this.free.isEmpty()) {
             int root = free.iterator().next();
             free.remove(root);
             bfs(root);
@@ -160,6 +178,7 @@ public class Admonds_Algo_Util {
 
     /**
      * finding augmenting path from key and calling augment
+     * 
      * @param key
      */
     void bfs(Integer key) { // amichai
@@ -168,10 +187,17 @@ public class Admonds_Algo_Util {
 
     /**
      * only method that changes the match
+     * 
      * @param path
      */
-    void augment(List<edge_info> path){ // achiya
-
+    void augment(List<edge_info> path) { // achiya
+        
+        path.forEach((e)->{
+            e.setInMatch(!e.isInMatch());
+            if(e.isInMatch()){
+                this.match.add(e);
+            }
+        });
     }
 	/**
 	 * @param get src
