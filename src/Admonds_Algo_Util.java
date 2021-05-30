@@ -179,6 +179,8 @@ public class Admonds_Algo_Util {
     void bfs(Integer key) { // amichai
         Queue<Integer> queue = new LinkedList<Integer>();
         Stack<Integer> stackSuperNode = new Stack<>();
+        Stack<Integer> stackRoot = new Stack<>();
+        HashMap<Integer,weighted_graph> treeMap=new HashMap<>();
         queue.add(key);
         weighted_graph tree = new WGraph_DS();
         tree.addNode(key);
@@ -189,31 +191,46 @@ public class Admonds_Algo_Util {
                 if (tree.getNode(w.getKey()) == null && !free.contains(w.getKey())) {
                     int nei=getMate(w.getKey());
                     tree.addNode(w.getKey());
+                    tree.connect(v,w.getKey(),0);
                     tree.addNode(nei);
                     tree.connect(w.getKey(),nei,0);
                     queue.add(nei);
                 }else if(tree.getNode(w.getKey())!=null){
                     var cycle=bfs(v,w.getKey(),tree);
                     if (cycle.size()%2==1){
+                        stackRoot.push(v);
+                        treeMap.put(v,tree);
                         compress(cycle);
                         int keySuper=g.getHighest_key();
                         queue.add(keySuper);
+                        while (cycle.contains(queue.peek())){
+                            queue.poll();
+                        }
                         stackSuperNode.push(keySuper);
-
                     }
                 }else if(free.contains(w.getKey())){
+                    int root=v;
+
                     while (!stackSuperNode.isEmpty()){
-                        decompress((SuperNode)g.getNode(stackSuperNode.pop()));
+                        var sn=(SuperNode)g.getNode(stackSuperNode.pop());
+                        root=stackRoot.pop();
+                        tree=treeMap.get(root);
+                        decompress(sn);
                     }
-                    var path=bfs(w.getKey(),v,tree);
+                    tree.addNode(w.getKey());
+                    tree.connect(w.getKey(),v,0);
+
+                    var path=bfs(w.getKey(),root,tree);
                     augment(getPath(path));
                     free.remove(w.getKey());
+                    break;
                 }
             }
         }
 
 
     }
+
     private int getMate(int key){
         for(edge_info e:match){
             var nodes=e.getNodes();
