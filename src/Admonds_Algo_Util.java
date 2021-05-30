@@ -205,8 +205,9 @@ public class Admonds_Algo_Util {
                     while (!stackSuperNode.isEmpty()){
                         decompress((SuperNode)g.getNode(stackSuperNode.pop()));
                     }
-
-
+                    var path=bfs(w.getKey(),v,tree);
+                    augment(getPath(path));
+                    free.remove(w.getKey());
                 }
             }
         }
@@ -227,8 +228,16 @@ public class Admonds_Algo_Util {
         }
         return -1;
     }
-    private LinkedList<edge_info> getPath(){
-        return null;
+    private List<edge_info> getPath(LinkedList<Integer> p){
+        var ans=new LinkedList<edge_info>();
+        Iterator<Integer> nodes=p.iterator();
+        int n=nodes.next();
+        while (nodes.hasNext()){
+            int nei=nodes.next();
+            ans.add(g.getEdge(n,nei));
+            n=nei;
+        }
+        return ans;
     }
 
     /**
