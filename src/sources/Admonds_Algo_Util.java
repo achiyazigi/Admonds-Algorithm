@@ -1,3 +1,5 @@
+package sources;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,24 +36,26 @@ public class Admonds_Algo_Util {
 
         private HashSet<edge_info> restored_neighbors = new HashSet<edge_info>();
         private HashSet<node_info> original_nodes = new HashSet<node_info>();
-        private HashSet<Integer> neighbors = new  HashSet<Integer>();
-        
+        private HashSet<Integer> neighbors = new HashSet<Integer>();
+
         SuperNode(List<Integer> keys) {
-        	
-        	// set the key
-        	this.key = g.getHighest_key() + 1;
-        	
-        
-        	// save the data of the nodes
-        	for(int node_id : keys) {
-        		
-        		for(node_info nei : g.getV(node_id)) {	// neighbors
-        			this.restored_neighbors.add(g.getEdge(node_id, nei.getKey()));
-        			if(!keys.contains(nei.getKey())) {this.neighbors.add(nei.getKey());}
-        		}
-        		
-	        	this.original_nodes.add(g.getNode(node_id));	// save the node
-	        }
+
+            // set the key
+            this.key = g.getHighest_key() + 1;
+
+
+            // save the data of the nodes
+            for (int node_id : keys) {
+
+                for (node_info nei : g.getV(node_id)) {    // neighbors
+                    this.restored_neighbors.add(g.getEdge(node_id, nei.getKey()));
+                    if (!keys.contains(nei.getKey())) {
+                        this.neighbors.add(nei.getKey());
+                    }
+                }
+
+                this.original_nodes.add(g.getNode(node_id));    // save the node
+            }
         }
 
         @Override
@@ -83,7 +87,6 @@ public class Admonds_Algo_Util {
         this.match = new HashSet<>();
         this.init(g);
     }
-
     Admonds_Algo_Util() {
         this.free = new HashSet<>();
         this.match = new HashSet<>();
@@ -128,7 +131,7 @@ public class Admonds_Algo_Util {
 
     /**
      * return last match calculated in g
-     * 
+     *
      * @return
      */
     HashSet<edge_info> get_match() {
@@ -169,7 +172,7 @@ public class Admonds_Algo_Util {
 
         System.out.println("Starting bfs!"); // just for indication the button pressed...
 
-        while (!this.free.isEmpty()) {
+        while(!this.free.isEmpty()){
             int root = free.iterator().next();
             free.remove(root);
             bfs(root);
@@ -178,20 +181,45 @@ public class Admonds_Algo_Util {
 
     /**
      * finding augmenting path from key and calling augment
-     * 
      * @param key
      */
     void bfs(Integer key) { // amichai
+        Queue<Integer> queue = new LinkedList<Integer>();
+        queue.add(key);
+        weighted_graph tree = new WGraph_DS();
+        tree.addNode(key);
+        while (!queue.isEmpty()) {
+            int v = queue.poll();
+            for (node_info w : g.getV(v)) {
+                if (tree.getNode(w.getKey()) == null && !free.contains(w.getKey())) {
+                    edge_info e=getMatchEdge(w.getKey());
+                    int nei;
 
+
+                }
+            }
+        }
+
+
+    }
+    private edge_info getMatchEdge(int key){
+        for(edge_info e:match){
+            var nodes=e.getNodes();
+            if(nodes.getFirst()==key||nodes.getSecond()==key){
+                return e;
+            }
+
+
+        }
+        return null;
     }
 
     /**
      * only method that changes the match
-     * 
      * @param path
      */
     void augment(List<edge_info> path) { // achiya
-        
+
         path.forEach((e)->{
             e.setInMatch(!e.isInMatch());
             if(e.isInMatch()){
@@ -246,17 +274,16 @@ public class Admonds_Algo_Util {
 		return list;
 			}
     /**
-     * 
      * @param tree
      * @param src
      * @param dest
      * @return the simple cycle formed in tree including src & dest
      */
-    List<Integer> identify_cyc(weighted_graph tree, int src, int dest){ // evyatar
-    	if(src == dest)	//havn't path
-    		return new LinkedList<Integer>();	//return empty linked list 
-    LinkedList<Integer> path = bfs(src, dest,tree);
-    	return path;
+    List<Integer> identify_cyc(weighted_graph tree, int src, int dest) { // evyatar
+        if (src == dest)    //havn't path
+            return new LinkedList<Integer>();    //return empty linked list
+        LinkedList<Integer> path = bfs(src, dest, tree);
+        return path;
     }
 }
 

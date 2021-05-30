@@ -1,7 +1,9 @@
+package sources;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import sources.*;
 import java.util.LinkedList;
 import java.util.List;
 

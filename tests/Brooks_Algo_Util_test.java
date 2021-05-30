@@ -1,4 +1,7 @@
+package sources;
+
 import org.junit.jupiter.api.Test;
+import sources.*;
 
 
 import static org.junit.jupiter.api.Assertions.*;

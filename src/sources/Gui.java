@@ -1,3 +1,4 @@
+package sources;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
