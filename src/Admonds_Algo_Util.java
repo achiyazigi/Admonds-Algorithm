@@ -179,11 +179,10 @@ public class Admonds_Algo_Util {
     void bfs(Integer key) { // amichai
         Queue<Integer> queue = new LinkedList<Integer>();
         Stack<Integer> stackSuperNode = new Stack<>();
-        Stack<Integer> stackRoot = new Stack<>();
-        HashMap<Integer,weighted_graph> treeMap=new HashMap<>();
         queue.add(key);
         weighted_graph tree = new WGraph_DS();
         tree.addNode(key);
+        int root=key;
 
         while (!queue.isEmpty()) {
             int v = queue.poll();
@@ -198,8 +197,7 @@ public class Admonds_Algo_Util {
                 }else if(tree.getNode(w.getKey())!=null){
                     var cycle=bfs(v,w.getKey(),tree);
                     if (cycle.size()%2==1){
-                        stackRoot.push(v);
-                        treeMap.put(v,tree);
+
                         compress(cycle);
                         int keySuper=g.getHighest_key();
                         queue.add(keySuper);
@@ -207,17 +205,16 @@ public class Admonds_Algo_Util {
                             queue.poll();
                         }
                         stackSuperNode.push(keySuper);
+                        break;
                     }
                 }else if(free.contains(w.getKey())){
-                    int root=v;
-                    int prev=root;
 
+                    int prev=v;
                     while (!stackSuperNode.isEmpty()){
                         var sn=(SuperNode)g.getNode(stackSuperNode.pop());
-                        root=stackRoot.pop();
-                        tree=treeMap.get(root);
                         prev=getOrigin(sn,w.getKey());
                         decompress(sn);
+
                     }
 
                     tree.addNode(w.getKey());
@@ -226,13 +223,18 @@ public class Admonds_Algo_Util {
                     var path=bfs(w.getKey(),root,tree);
                     augment(getPath(path));
                     free.remove(w.getKey());
+                    queue.clear();
                     break;
                 }
             }
         }
+        while (!stackSuperNode.isEmpty()){
+            var sn=(SuperNode)g.getNode(stackSuperNode.pop());
+            decompress(sn);
 
-
+        }
     }
+
     private int getOrigin(SuperNode s,int key){
         for (edge_info e:s.restored_neighbors) {
             var nodes=e.getNodes();
