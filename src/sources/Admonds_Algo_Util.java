@@ -167,7 +167,7 @@ public class Admonds_Algo_Util {
 
     void update_match() { // the algorithm!
 
-        System.out.println("Starting bfs!"); // just fot indication the button pressed...
+        System.out.println("Starting bfs!"); // just for indication the button pressed...
 
         while (!this.free.isEmpty()) {
             int root = free.iterator().next();
@@ -258,28 +258,6 @@ public class Admonds_Algo_Util {
     LinkedList<Integer> path = bfs(src, dest,tree);
     	return path;
     }
-
-public static void main(String args []) {
-	
-	weighted_graph graph = new WGraph_DS();
-	graph.addNode(0);
-	graph.addNode(1);
-	graph.addNode(2);
-	graph.addNode(3);
-	graph.addNode(4);
-	graph.addNode(5);
-
-//	graph.connect(0,1, 0);
-//	graph.connect(1,4, 0);
-//	graph.connect(4,3, 0);
-//	graph.connect(0,2, 0);
-//	graph.connect(2,5, 0);
-	Admonds_Algo_Util adm= new Admonds_Algo_Util(graph);
-	LinkedList<Integer> path = (LinkedList<Integer>) adm.identify_cyc(graph, 1, 1);
-	System.out.println(path);
-}
-
-
 }
 
 
