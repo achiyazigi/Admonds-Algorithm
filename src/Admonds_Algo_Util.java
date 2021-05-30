@@ -210,15 +210,18 @@ public class Admonds_Algo_Util {
                     }
                 }else if(free.contains(w.getKey())){
                     int root=v;
+                    int prev=root;
 
                     while (!stackSuperNode.isEmpty()){
                         var sn=(SuperNode)g.getNode(stackSuperNode.pop());
                         root=stackRoot.pop();
                         tree=treeMap.get(root);
+                        prev=getOrigin(sn,w.getKey());
                         decompress(sn);
                     }
+
                     tree.addNode(w.getKey());
-                    tree.connect(w.getKey(),v,0);
+                    tree.connect(w.getKey(),prev,0);
 
                     var path=bfs(w.getKey(),root,tree);
                     augment(getPath(path));
@@ -229,6 +232,18 @@ public class Admonds_Algo_Util {
         }
 
 
+    }
+    private int getOrigin(SuperNode s,int key){
+        for (edge_info e:s.restored_neighbors) {
+            var nodes=e.getNodes();
+            if(nodes.getFirst()==key){
+                return nodes.getSecond();
+            }else if(nodes.getSecond()==key){
+                return nodes.getFirst();
+            }
+
+        }
+        return -1;
     }
 
     private int getMate(int key){
