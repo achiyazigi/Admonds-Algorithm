@@ -195,9 +195,8 @@ public class Admonds_Algo_Util {
                     tree.connect(w.getKey(),nei,0);
                     queue.add(nei);
                 }else if(tree.getNode(w.getKey())!=null){
-                    var cycle=bfs(v,w.getKey(),tree);
+                    var cycle=bfs(root,w.getKey(),tree);
                     if (cycle.size()%2==1){
-
                         compress(cycle);
                         int keySuper=g.getHighest_key();
                         queue.add(keySuper);
@@ -208,7 +207,6 @@ public class Admonds_Algo_Util {
                         break;
                     }
                 }else if(free.contains(w.getKey())){
-
                     int prev=v;
                     while (!stackSuperNode.isEmpty()){
                         var sn=(SuperNode)g.getNode(stackSuperNode.pop());
