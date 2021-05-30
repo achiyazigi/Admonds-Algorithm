@@ -1,4 +1,3 @@
-package sources;
 
 public interface node_info{
     /**

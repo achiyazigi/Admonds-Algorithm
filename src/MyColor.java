@@ -1,4 +1,3 @@
-package sources;
 
 enum MyColor {
     //Color end string, color reset
