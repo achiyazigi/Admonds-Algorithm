@@ -1,11 +1,5 @@
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 import kotlin.Pair;
 
@@ -184,15 +178,33 @@ public class Admonds_Algo_Util {
      */
     void bfs(Integer key) { // amichai
         Queue<Integer> queue = new LinkedList<Integer>();
+        Stack<Integer> stackSuperNode = new Stack<>();
         queue.add(key);
         weighted_graph tree = new WGraph_DS();
         tree.addNode(key);
+
         while (!queue.isEmpty()) {
             int v = queue.poll();
             for (node_info w : g.getV(v)) {
                 if (tree.getNode(w.getKey()) == null && !free.contains(w.getKey())) {
-                    edge_info e=getMatchEdge(w.getKey());
-                    int nei;
+                    int nei=getMate(w.getKey());
+                    tree.addNode(w.getKey());
+                    tree.addNode(nei);
+                    tree.connect(w.getKey(),nei,0);
+                    queue.add(nei);
+                }else if(tree.getNode(w.getKey())!=null){
+                    var cycle=bfs(v,w.getKey(),tree);
+                    if (cycle.size()%2==1){
+                        compress(cycle);
+                        int keySuper=g.getHighest_key();
+                        queue.add(keySuper);
+                        stackSuperNode.push(keySuper);
+
+                    }
+                }else if(free.contains(w.getKey())){
+                    while (!stackSuperNode.isEmpty()){
+                        decompress((SuperNode)g.getNode(stackSuperNode.pop()));
+                    }
 
 
                 }
@@ -201,15 +213,21 @@ public class Admonds_Algo_Util {
 
 
     }
-    private edge_info getMatchEdge(int key){
+    private int getMate(int key){
         for(edge_info e:match){
             var nodes=e.getNodes();
-            if(nodes.getFirst()==key||nodes.getSecond()==key){
-                return e;
+            if(nodes.getFirst()==key){
+                return nodes.getSecond();
+            }
+            if(nodes.getSecond()==key){
+                return nodes.getFirst();
             }
 
 
         }
+        return -1;
+    }
+    private LinkedList<edge_info> getPath(){
         return null;
     }
 
