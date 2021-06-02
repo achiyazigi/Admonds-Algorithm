@@ -1,8 +1,6 @@
 
 import java.util.*;
 
-import kotlin.Pair;
-
 
 public class Admonds_Algo_Util {
 
@@ -20,7 +18,7 @@ public class Admonds_Algo_Util {
      * get_match() called
      */
     class SuperNode implements node_info {
-    	
+
         private int key;
         private String info;
         private double tag;
@@ -37,44 +35,75 @@ public class Admonds_Algo_Util {
             // set the key
             this.key = g.getHighest_key() + 1;
 
-
             // save the data of the nodes
             for (int node_id : keys) {
 
-                for (node_info nei : g.getV(node_id)) {    // neighbors
+                for (node_info nei : g.getV(node_id)) { // neighbors
                     this.restored_neighbors.add(g.getEdge(node_id, nei.getKey()));
                     if (!keys.contains(nei.getKey())) {
                         this.neighbors.add(nei.getKey());
                     }
                 }
 
-                this.original_nodes.add(g.getNode(node_id));    // save the node
+                this.original_nodes.add(g.getNode(node_id)); // save the node
             }
 
         }
 
         @Override
-        public int getKey() {return this.key;}
+        public int getKey() {
+            return this.key;
+        }
+
         @Override
-        public String getInfo() {return this.info;}
+        public String getInfo() {
+            return this.info;
+        }
+
         @Override
-        public void setInfo(String s) {this.info = s;}
+        public void setInfo(String s) {
+            this.info = s;
+        }
+
         @Override
-        public double getTag() {return this.tag;}
+        public double getTag() {
+            return this.tag;
+        }
+
         @Override
-        public void setTag(double t) {this.tag = t;}
+        public void setTag(double t) {
+            this.tag = t;
+        }
+
         @Override
-        public void setX(int x) {this.x = x;}
+        public void setX(int x) {
+            this.x = x;
+        }
+
         @Override
-        public void setY(int y) {this.key = y;}
+        public void setY(int y) {
+            this.key = y;
+        }
+
         @Override
-        public int X() {return this.x;}
+        public int X() {
+            return this.x;
+        }
+
         @Override
-        public int Y() {return this.y;}
+        public int Y() {
+            return this.y;
+        }
+
         @Override
-        public int getColor() {return this.color;}
+        public int getColor() {
+            return this.color;
+        }
+
         @Override
-        public void setColor(int color) {this.color = color;}
+        public void setColor(int color) {
+            this.color = color;
+        }
     }
 
     Admonds_Algo_Util(weighted_graph g) {
@@ -82,6 +111,7 @@ public class Admonds_Algo_Util {
         this.match = new HashSet<>();
         this.init(g);
     }
+
     Admonds_Algo_Util() {
         this.free = new HashSet<>();
         this.match = new HashSet<>();
@@ -132,9 +162,10 @@ public class Admonds_Algo_Util {
     HashSet<edge_info> get_match() {
         return this.match;
     }
-    
+
     /**
      * compress the nodes given to a super-node
+     * 
      * @param keys
      */
     void compress(List<Integer> keys) {
@@ -146,9 +177,10 @@ public class Admonds_Algo_Util {
     	for(int nei : sn.neighbors) {g.connect(sn.getKey(), nei, 0);}	//connect the neighbors
 
     }
-    
+
     /**
      * de-compress a super-node to the original nodes
+     * 
      * @param sn
      */
     public void decompress(SuperNode sn) {
@@ -162,13 +194,12 @@ public class Admonds_Algo_Util {
     
     	g.removeNode(sn.getKey());	// remove the super-node
     }
-    
 
     void update_match() { // the algorithm!
 
         System.out.println("Starting bfs!"); // just for indication the button pressed...
 
-        while(!this.free.isEmpty()){
+        while (!this.free.isEmpty()) {
             int root = free.iterator().next();
             free.remove(root);
             bfs(root);
@@ -177,6 +208,7 @@ public class Admonds_Algo_Util {
 
     /**
      * finding augmenting path from key and calling augment
+     * 
      * @param key
      */
     void bfs(Integer key) { // amichai
@@ -191,17 +223,17 @@ public class Admonds_Algo_Util {
             int v = queue.poll();
             for (node_info w : g.getV(v)) {
                 if (tree.getNode(w.getKey()) == null && !free.contains(w.getKey())) {
-                    int nei=getMate(w.getKey());
+                    int nei = getMate(w.getKey());
                     tree.addNode(w.getKey());
                     tree.connect(v,w.getKey(),0);
                     tree.addNode(nei);
-                    tree.connect(w.getKey(),nei,0);
+                    tree.connect(w.getKey(), nei, 0);
                     queue.add(nei);
-                }else if(tree.getNode(w.getKey())!=null){
-                    var cycle=bfs(v,w.getKey(),tree);
-                    if (cycle.size()%2==1){
+                } else if (tree.getNode(w.getKey()) != null) {
+                    var cycle = bfs(v, w.getKey(), tree);
+                    if (cycle.size() % 2 == 1) {
                         compress(cycle);
-                        int keySuper=g.getHighest_key();
+                        int keySuper = g.getHighest_key();
                         queue.add(keySuper);
                         while (cycle.contains(queue.peek())){
                             queue.poll();
@@ -258,85 +290,88 @@ public class Admonds_Algo_Util {
             if(nodes.getFirst()==key){
                 return nodes.getSecond();
             }
-            if(nodes.getSecond()==key){
+            if (nodes.getSecond() == key) {
                 return nodes.getFirst();
             }
-
 
         }
         return -1;
     }
-    private List<edge_info> getPath(LinkedList<Integer> p){
-        var ans=new LinkedList<edge_info>();
-        Iterator<Integer> nodes=p.iterator();
-        int n=nodes.next();
-        while (nodes.hasNext()){
-            int nei=nodes.next();
-            ans.add(g.getEdge(n,nei));
-            n=nei;
+
+    private List<edge_info> getPath(LinkedList<Integer> p) {
+        var ans = new LinkedList<edge_info>();
+        Iterator<Integer> nodes = p.iterator();
+        int n = nodes.next();
+        while (nodes.hasNext()) {
+            int nei = nodes.next();
+            ans.add(g.getEdge(n, nei));
+            n = nei;
         }
         return ans;
     }
 
     /**
      * only method that changes the match
+     * 
      * @param path
      */
     void augment(List<edge_info> path) { // achiya
 
-        path.forEach((e)->{
+        path.forEach((e) -> {
             e.setInMatch(!e.isInMatch());
-            if(e.isInMatch()){
+            if (e.isInMatch()) {
                 this.match.add(e);
             }
         });
     }
-	/**
-	 * @param get src
-	 * the run time of this function is o(v+e)
-	 * sign in the tag of every node the distance from the src 
-	 * and if havn't path to which node her tag will be with -1
-	 * the path kept in the hash map and convert to linked list
-	 */
-	private LinkedList<Integer> bfs(int src,int dest, weighted_graph graph) {
-		if(graph.getV().isEmpty())								//check if it is empty graph
-			return new LinkedList<Integer>();
-	
-		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();	//keep the nodes in the path -if path exist 
-		map.put(src, 0);	// insert the src node
-		for(node_info keys : graph.getV()) {						//initial the tag's nodes- O(V)
-			keys.setTag(-1);
-		}
-		
-		Queue<Integer> queue=new LinkedList<Integer>();
-		queue.add(graph.getNode(src).getKey());				//keep the key in the queue
-		graph.getNode(src).setTag(0);				//the first node init with 0 										
-		
-		while(!queue.isEmpty()) {
-			Integer loc=queue.poll();
-					for(node_info nei : graph.getV(loc)) {
-						if(nei.getTag() == -1) {
-							queue.add(nei.getKey());
-							nei.setTag(graph.getNode(loc).getTag()+1);			//if have neighbor update the the tag according to his parent
-							map.put(nei.getKey(), loc);
-						}
-					}
-				}
-		
-		//extract the path from the map 
-		LinkedList<Integer> list =new LinkedList<Integer>();
-		if(graph.getNode(dest).getTag() != -1) {	// check if path between the nodes exist
-			int curr = dest;
-			list.add(curr);	//insert the first 
-				while(map.get(curr) != src) {
-					list.add(map.get(curr));
-					curr = map.get(curr); 	//return the neighbord of the current node
-			}
-				list.add(src);
-				Collections.reverse(list);
-				}		
-		return list;
-			}
+
+    /**
+     * @param get src the run time of this function is o(v+e) sign in the tag of
+     *            every node the distance from the src and if havn't path to which
+     *            node her tag will be with -1 the path kept in the hash map and
+     *            convert to linked list
+     */
+    private LinkedList<Integer> bfs(int src, int dest, weighted_graph graph) {
+        if (graph.getV().isEmpty()) // check if it is empty graph
+            return new LinkedList<Integer>();
+
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>(); // keep the nodes in the path -if path exist
+        map.put(src, 0); // insert the src node
+        for (node_info keys : graph.getV()) { // initial the tag's nodes- O(V)
+            keys.setTag(-1);
+        }
+
+        Queue<Integer> queue = new LinkedList<Integer>();
+        queue.add(graph.getNode(src).getKey()); // keep the key in the queue
+        graph.getNode(src).setTag(0); // the first node init with 0
+
+        while (!queue.isEmpty()) {
+            Integer loc = queue.poll();
+            for (node_info nei : graph.getV(loc)) {
+                if (nei.getTag() == -1) {
+                    queue.add(nei.getKey());
+                    nei.setTag(graph.getNode(loc).getTag() + 1); // if have neighbor update the the tag according to his
+                                                                 // parent
+                    map.put(nei.getKey(), loc);
+                }
+            }
+        }
+
+        // extract the path from the map
+        LinkedList<Integer> list = new LinkedList<Integer>();
+        if (graph.getNode(dest).getTag() != -1) { // check if path between the nodes exist
+            int curr = dest;
+            list.add(curr); // insert the first
+            while (map.get(curr) != src) {
+                list.add(map.get(curr));
+                curr = map.get(curr); // return the neighbord of the current node
+            }
+            list.add(src);
+            Collections.reverse(list);
+        }
+        return list;
+    }
+
     /**
      * @param tree
      * @param src
@@ -344,12 +379,9 @@ public class Admonds_Algo_Util {
      * @return the simple cycle formed in tree including src & dest
      */
     List<Integer> identify_cyc(weighted_graph tree, int src, int dest) { // evyatar
-        if (src == dest)    //havn't path
-            return new LinkedList<Integer>();    //return empty linked list
+        if (src == dest) // havn't path
+            return new LinkedList<Integer>(); // return empty linked list
         LinkedList<Integer> path = bfs(src, dest, tree);
         return path;
     }
 }
-
-
-
