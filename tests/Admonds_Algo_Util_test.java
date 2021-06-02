@@ -1,11 +1,64 @@
 import org.junit.jupiter.api.Test;
 
+import kotlin.Pair;
+
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class Admonds_Algo_Util_test {
+
+    /**
+     * 
+     * @param seed
+     * @param nodes
+     * @param edges
+     * @return random graph (seed uniformed connections)
+     */
+    static private weighted_graph graph_generator(int seed, int nodes, int edges) {
+        weighted_graph res = new WGraph_DS();
+        List<Pair<Integer, Integer>> free_edges = new LinkedList<>();
+        Random r = new Random(seed);
+        for (int i = 0; i < nodes - 1; i++) {
+            res.addNode(i);
+            for (int j = i + 1; j < nodes; j++) {
+                free_edges.add(new Pair<Integer, Integer>(i, j));
+            }
+        }
+        res.addNode(nodes - 1);
+
+        assert (free_edges.size() == nodes * (nodes - 1) / 2);
+        Collections.shuffle(free_edges, r);
+        for (int i = 0; i < edges; i++) {
+            var e = free_edges.remove(0);
+            res.connect(e.getFirst(), e.getSecond(), r.nextDouble());
+        }
+        return res;
+    }
+
+    /**
+     * 
+     * @param seed
+     * @param g
+     * @return a random edge in g, null if g has no edges
+     */
+    static private edge_info get_random_edge(int seed, weighted_graph g) {
+        if (g.nodeSize() == 0) {
+            return null;
+        }
+        int nodes = g.nodeSize();
+        Random r = new Random(seed);
+        edge_info e = null;
+
+        while (e == null) {
+            e = g.getEdge(r.nextInt(nodes), r.nextInt(nodes));
+        }
+        return e;
+    }
 
     @Test
     void test_super_node() {
@@ -143,5 +196,29 @@ public class Admonds_Algo_Util_test {
         assertTrue(g.getEdge(0, 2).isInMatch());
         assertFalse(g.getEdge(2, 3).isInMatch());
         assertTrue(g.getEdge(3, 0).isInMatch());
+    }
+
+    @Test
+    public void test_init() {
+        int nodes = 100;
+        int edges = 4217 /* nodes * (nodes - 1) / 2 */;
+        int seed = 0;
+        Random r = new Random(seed);
+        weighted_graph g = graph_generator(seed, nodes, edges);
+        assertTrue(g.nodeSize() == nodes);
+        assertTrue(g.edgeSize() == edges);
+
+        Admonds_Algo_Util aa = new Admonds_Algo_Util(g);
+        for (int i = 0; i < edges; i++) {
+            edge_info e = get_random_edge(seed, g);
+            boolean b = r.nextBoolean();
+            e.setInMatch(b);
+            aa.init(g);
+            Set<edge_info> match = aa.get_match();
+            assertEquals(match.contains(e), b);
+            assertEquals(aa.free.contains(e.getNodes().getFirst()), !b);
+            assertEquals(aa.free.contains(e.getNodes().getSecond()), !b);
+        }
+
     }
 }

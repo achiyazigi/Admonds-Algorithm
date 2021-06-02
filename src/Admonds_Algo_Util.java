@@ -150,6 +150,9 @@ public class Admonds_Algo_Util {
                 if (e.isInMatch()) {
                     this.match.add(e);
                 }
+                else{
+                    this.match.remove(e);
+                }
             });
         });
     }
