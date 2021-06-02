@@ -41,9 +41,13 @@ public class Admonds_Algo_Util_test {
 
     /**
      * build a graph in the form:
-     * 
-     * 4 | 0---1 | \ | 3---2 | 5
-     * 
+     * _________________________________________________________________________ 4
+     * _________________________________________________________________________ |
+     * _____________________________________________________________________ 0---1
+     * _____________________________________________________________________ | \ |
+     * _____________________________________________________________________ 3---2
+     * _____________________________________________________________________ |
+     * _____________________________________________________________________ 5
      * 
      * @return
      */
@@ -88,5 +92,56 @@ public class Admonds_Algo_Util_test {
         Admonds_Algo_Util adm = new Admonds_Algo_Util(graph);
         LinkedList<Integer> path = (LinkedList<Integer>) adm.identify_cyc(graph, 1, 1);
         System.out.println(path);
+    }
+
+    @Test
+    public void test_augment() {
+        weighted_graph g = build_simple_graph_1();
+        g.getEdge(1, 0).setInMatch(true);
+        Admonds_Algo_Util aa = new Admonds_Algo_Util(g);
+        LinkedList<edge_info> path = new LinkedList<>();
+        path.add(g.getEdge(4, 1));
+        path.add(g.getEdge(1, 0));
+        path.add(g.getEdge(0, 3));
+        // 4 > false > 1 > true > 0 > false > 3
+        aa.augment(path);
+        // 4 > true > 1 > false > 0 > true > 3
+        assertTrue(g.getEdge(4, 1).isInMatch());
+        assertFalse(g.getEdge(1, 0).isInMatch());
+        assertTrue(g.getEdge(0, 3).isInMatch());
+
+        path.clear();
+
+        path.add(g.getEdge(1, 0));
+        path.add(g.getEdge(0, 3));
+        path.add(g.getEdge(3, 5));
+        // 1 > false > 0 > true > 3 > false > 5
+        aa.augment(path);
+        // 1 > true > 0 > false > 3 > true > 5
+
+        assertTrue(g.getEdge(1, 0).isInMatch());
+        assertFalse(g.getEdge(0, 3).isInMatch());
+        assertTrue(g.getEdge(3, 5).isInMatch());
+
+        path.clear();
+
+        path.add(g.getEdge(2, 1));
+        path.add(g.getEdge(1, 0));
+        path.add(g.getEdge(0, 2));
+
+        g.getEdge(2, 3).setInMatch(true);
+        path.add(g.getEdge(2, 3));
+        path.add(g.getEdge(3, 0));
+
+        // 2 > false > 1 > true > 0 > false > 2 > true > 3 > false > 0
+
+        aa.augment(path);
+        // 2 > true > 1 > false > 0 > true > 2 > false > 3 > true > 0
+
+        assertTrue(g.getEdge(2, 1).isInMatch());
+        assertFalse(g.getEdge(1, 0).isInMatch());
+        assertTrue(g.getEdge(0, 2).isInMatch());
+        assertFalse(g.getEdge(2, 3).isInMatch());
+        assertTrue(g.getEdge(3, 0).isInMatch());
     }
 }
