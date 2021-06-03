@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
 public class Admonds_Algo_Util_test {
 
     /**
@@ -136,6 +135,83 @@ public class Admonds_Algo_Util_test {
         g.connect(0, 2, 0);
 
         return g;
+    }
+    
+    @Test
+    public void test_SuperNode() {
+    	//check star graph
+    	weighted_graph g = new WGraph_DS();
+    	g.addNode(0);
+    	g.addNode(1);
+    	g.addNode(2);
+    	g.addNode(3);
+    	g.connect(0,1, 0);
+    	g.connect(0,2, 0);
+    	g.connect(0,3, 0);
+    	SuperNode sn = new SuperNode(g);
+    	LinkedList<Integer> ls = new LinkedList<Integer>();
+    	ls.add(0);
+    	ls.add(1);
+    	ls.add(2);
+    	ls.add(3);
+    	sn.compress(ls);
+    	assertEquals(1, g.nodeSize());
+    	assertEquals(0, g.getV().iterator().next().getKey());
+    	assertEquals(0, g.edgeSize());
+    	g.addNode(4);
+    	g.addNode(5);
+    	g.addNode(6);
+    	g.connect(0, 4, 0);
+    	g.getEdge(0, 4).setInMatch(true);
+    	g.connect(4, 5, 0);
+    	g.getEdge(4, 5).setInMatch(true);
+    	g.connect(5, 6, 0);
+    	g.connect(6, 4, 0);
+    	ls.clear();
+    	ls.add(4);
+    	ls.add(5);
+    	ls.add(6);
+    	sn.compress(ls);
+    	assertTrue(g.getEdge(0, 4) != null);
+    	assertTrue(g.getEdge(0, 4).isInMatch());
+    	sn.decompress(4);
+    	assertEquals(4, g.nodeSize());
+    	assertEquals(4, g.edgeSize());
+    	//check is in match 
+    	assertTrue(g.getEdge(0,4).isInMatch());
+    	assertTrue(g.getEdge(4,5).isInMatch());
+    	assertFalse(g.getEdge(5,6).isInMatch());
+    	assertFalse(g.getEdge(6,4).isInMatch());
+    	//decompress
+    	weighted_graph h = new WGraph_DS();
+    	SuperNode sup = new SuperNode(h);
+    	h.addNode(0);
+    	h.addNode(1);
+    	h.addNode(2);
+    	h.addNode(3);
+    	h.addNode(4);
+    	h.addNode(5);
+    	h.addNode(6);
+    	h.connect(0, 4, 0);
+    	h.connect(0, 1, 0);
+    	h.connect(0, 2, 0);
+    	h.connect(0, 3, 0);
+    	h.connect(0, 4, 0);
+    	h.connect(4, 5, 0);
+    	h.connect(5, 6, 0);
+    	h.connect(6, 4, 0);
+    	ls.clear();
+    	ls.add(4);
+    	ls.add(5);
+    	sup.compress(ls);
+    	assertTrue(h.hasEdge(4, 6));
+    	ls.clear();
+    	ls.add(0);
+    	ls.add(4);
+    	ls.add(1);
+    	ls.add(2);
+    	ls.add(3);
+    	
     }
 
     @Test

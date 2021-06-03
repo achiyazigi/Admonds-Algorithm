@@ -199,14 +199,17 @@ public class WGraph_DS implements weighted_graph, Serializable{
      * @param key
      */
     public void addNode(node_info n) {
-    	 if(!this.v.containsKey(n.getKey())){   
-             this.v.put(n.getKey(), n);
-             this.e.put(n.getKey(), new HashMap<node_info, edge_info>());
-             this.MC ++;
-         }
-         if(n.getKey() > this.highest_key){
-             this.highest_key = n.getKey();
-         }
+    	if(n != null) {
+    		if(!this.v.containsKey(n.getKey())){   
+                this.v.put(n.getKey(), n);
+                this.e.put(n.getKey(), new HashMap<node_info, edge_info>());
+                this.MC ++;
+            }
+            if(n.getKey() > this.highest_key){
+                this.highest_key = n.getKey();
+            }
+    	}
+    	 
     }
 
     
