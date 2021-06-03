@@ -287,7 +287,7 @@ public class Admonds_Algo_Util {
         return -1;
     }
 
-    private int getMate(int key){
+    public int getMate(int key){
         for(edge_info e:match){
             var nodes=e.getNodes();
             if(nodes.getFirst()==key){
@@ -301,7 +301,7 @@ public class Admonds_Algo_Util {
         return -1;
     }
 
-    private List<edge_info> getPath(LinkedList<Integer> p) {
+    public List<edge_info> getPath(List<Integer> p) {
         var ans = new LinkedList<edge_info>();
         Iterator<Integer> nodes = p.iterator();
         int n = nodes.next();

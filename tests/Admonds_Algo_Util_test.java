@@ -13,7 +13,6 @@ import java.util.Set;
 public class Admonds_Algo_Util_test {
 
     /**
-     * 
      * @param seed
      * @param nodes
      * @param edges
@@ -41,7 +40,6 @@ public class Admonds_Algo_Util_test {
     }
 
     /**
-     * 
      * @param seed
      * @param g
      * @return a random edge in g, null if g has no edges
@@ -58,6 +56,19 @@ public class Admonds_Algo_Util_test {
             e = g.getEdge(r.nextInt(nodes), r.nextInt(nodes));
         }
         return e;
+    }
+
+    public static weighted_graph graph_path(int v_size) {
+        weighted_graph g = new WGraph_DS();
+        for (int i = 0; i < v_size; i++) {
+
+            g.addNode(i);
+        }
+        for (int i = 0; i < v_size - 1; i++) {
+
+            g.connect(i, i + 1, 0);
+        }
+        return g;
     }
 
     @Test
@@ -101,7 +112,7 @@ public class Admonds_Algo_Util_test {
      * _____________________________________________________________________ 3---2
      * _____________________________________________________________________ |
      * _____________________________________________________________________ 5
-     * 
+     *
      * @return
      */
     private weighted_graph build_simple_graph_1() {
@@ -218,6 +229,80 @@ public class Admonds_Algo_Util_test {
             assertEquals(match.contains(e), b);
             assertEquals(aa.free.contains(e.getNodes().getFirst()), !b);
             assertEquals(aa.free.contains(e.getNodes().getSecond()), !b);
+        }
+
+    }
+
+    @Test
+    public void getPath() {
+        int size = 20;
+        weighted_graph g = graph_path(size);
+        Admonds_Algo_Util aa = new Admonds_Algo_Util(g);
+        List<Integer> lst = new LinkedList<>();
+        for (int i = 0; i < size; i++) {
+            lst.add(i);
+        }
+        var edges = aa.getPath(lst);
+        assertEquals(19, edges.size());
+        for (int i = 0; i < size - 1; i++) {
+            assertEquals(g.getEdge(i, i + 1), edges.get(i));
+        }
+    }
+
+    @Test
+    public void getMate() {
+        int nodes = 100;
+        int edges = 4217 /* nodes * (nodes - 1) / 2 */;
+        int seed = 0;
+
+        weighted_graph g = graph_generator(seed, nodes, edges);
+        Admonds_Algo_Util aa = new Admonds_Algo_Util(g);
+        for (int i = 0; i < edges; i++) {
+            edge_info e = get_random_edge(seed, g);
+            e.setInMatch(true);
+            aa.init(g);
+            var nodeEdge = e.getNodes();
+            assertEquals(nodeEdge.getFirst(), aa.getMate(nodeEdge.getSecond()));
+            assertEquals(nodeEdge.getSecond(), aa.getMate(nodeEdge.getFirst()));
+
+
+        }
+    }
+
+    @Test
+    public void mainBfs() {
+        int nodes = 4;
+        int edges = 6 /* nodes * (nodes - 1) / 2 */;
+        int seed = 0;
+        Random r = new Random(seed);
+        weighted_graph g = graph_generator(seed, nodes, edges);
+
+        Admonds_Algo_Util aa = new Admonds_Algo_Util(g);
+        aa.update_match();
+        var match=aa.get_match();
+        assertEquals(2,match.size());
+        nodes = 100;
+         edges = 4217 /* nodes * (nodes - 1) / 2 */;seed = 0;
+
+        weighted_graph big_g = graph_generator(seed, nodes, edges);g = graph_generator(seed, nodes, edges);
+         aa = new Admonds_Algo_Util(big_g);
+         aa.update_match();
+         match=aa.get_match();
+         int count=0;
+         boolean flag=false;
+        for (node_info n:g.getV()) {
+            flag=false;
+            for (edge_info e:match) {
+                var nodeEdge=e.getNodes();
+                if(n.getKey()==nodeEdge.getFirst()||n.getKey()==nodeEdge.getSecond()){
+                    flag=true;
+                    count++;
+                }
+            }
+            if(flag){
+                assertEquals(0,count);
+            }
+
         }
 
     }
