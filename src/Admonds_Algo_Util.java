@@ -1,13 +1,14 @@
 
 import java.util.*;
 
-
 public class Admonds_Algo_Util {
 
     HashSet<Integer> free;
     HashSet<edge_info> match;
     weighted_graph g;
     weighted_graph tree;
+
+    
 
     /**
      * itay, nir this class compresses an odd cycle into one node having all the out
@@ -17,94 +18,94 @@ public class Admonds_Algo_Util {
      * original state when its done... e.g. after update_match() and before
      * get_match() called
      */
-    class SuperNode implements node_info {
+    // class SuperNode implements node_info {
 
-        private int key;
-        private String info;
-        private double tag;
-        private int x;
-        private int y;
-        private int color = 0;
+    // private int key;
+    // private String info;
+    // private double tag;
+    // private int x;
+    // private int y;
+    // private int color = 0;
 
-        private HashSet<edge_info> restored_neighbors = new HashSet<edge_info>();
-        private HashSet<node_info> original_nodes = new HashSet<node_info>();
-        private HashSet<Integer> neighbors = new HashSet<Integer>();
+    // private HashSet<edge_info> restored_neighbors = new HashSet<edge_info>();
+    // private HashSet<node_info> original_nodes = new HashSet<node_info>();
+    // private HashSet<Integer> neighbors = new HashSet<Integer>();
 
-        SuperNode(List<Integer> keys ) {
+    // SuperNode(List<Integer> keys ) {
 
-            // set the key
-            this.key = g.getHighest_key() + 1;
+    // // set the key
+    // this.key = g.getHighest_key() + 1;
 
-            // save the data of the nodes
-            for (int node_id : keys) {
+    // // save the data of the nodes
+    // for (int node_id : keys) {
 
-                for (node_info nei : g.getV(node_id)) { // neighbors
-                    this.restored_neighbors.add(g.getEdge(node_id, nei.getKey()));
-                    if (!keys.contains(nei.getKey())) {
-                        this.neighbors.add(nei.getKey());
-                    }
-                }
+    // for (node_info nei : g.getV(node_id)) { // neighbors
+    // this.restored_neighbors.add(g.getEdge(node_id, nei.getKey()));
+    // if (!keys.contains(nei.getKey())) {
+    // this.neighbors.add(nei.getKey());
+    // }
+    // }
 
-                this.original_nodes.add(g.getNode(node_id)); // save the node
-            }
+    // this.original_nodes.add(g.getNode(node_id)); // save the node
+    // }
 
-        }
+    // }
 
-        @Override
-        public int getKey() {
-            return this.key;
-        }
+    // @Override
+    // public int getKey() {
+    // return this.key;
+    // }
 
-        @Override
-        public String getInfo() {
-            return this.info;
-        }
+    // @Override
+    // public String getInfo() {
+    // return this.info;
+    // }
 
-        @Override
-        public void setInfo(String s) {
-            this.info = s;
-        }
+    // @Override
+    // public void setInfo(String s) {
+    // this.info = s;
+    // }
 
-        @Override
-        public double getTag() {
-            return this.tag;
-        }
+    // @Override
+    // public double getTag() {
+    // return this.tag;
+    // }
 
-        @Override
-        public void setTag(double t) {
-            this.tag = t;
-        }
+    // @Override
+    // public void setTag(double t) {
+    // this.tag = t;
+    // }
 
-        @Override
-        public void setX(int x) {
-            this.x = x;
-        }
+    // @Override
+    // public void setX(int x) {
+    // this.x = x;
+    // }
 
-        @Override
-        public void setY(int y) {
-            this.key = y;
-        }
+    // @Override
+    // public void setY(int y) {
+    // this.key = y;
+    // }
 
-        @Override
-        public int X() {
-            return this.x;
-        }
+    // @Override
+    // public int X() {
+    // return this.x;
+    // }
 
-        @Override
-        public int Y() {
-            return this.y;
-        }
+    // @Override
+    // public int Y() {
+    // return this.y;
+    // }
 
-        @Override
-        public int getColor() {
-            return this.color;
-        }
+    // @Override
+    // public int getColor() {
+    // return this.color;
+    // }
 
-        @Override
-        public void setColor(int color) {
-            this.color = color;
-        }
-    }
+    // @Override
+    // public void setColor(int color) {
+    // this.color = color;
+    // }
+    // }
 
     Admonds_Algo_Util(weighted_graph g) {
         this.free = new HashSet<>();
@@ -149,8 +150,7 @@ public class Admonds_Algo_Util {
                 edge_info e = this.g.getEdge(ukey, v.getKey());
                 if (e.isInMatch()) {
                     this.match.add(e);
-                }
-                else{
+                } else {
                     this.match.remove(e);
                 }
             });
@@ -172,12 +172,16 @@ public class Admonds_Algo_Util {
      * @param keys
      */
     void compress(List<Integer> keys) {
-    	SuperNode sn = new SuperNode(keys);
- 
-    	g.addNode(sn);	// add to the graph
-    	
-    	for(int n : keys) {g.removeNode(n);}	// remove the nodes
-    	for(int nei : sn.neighbors) {g.connect(sn.getKey(), nei, 0);}	//connect the neighbors
+        SuperNode sn = new SuperNode(keys);
+
+        g.addNode(sn); // add to the graph
+
+        for (int n : keys) {
+            g.removeNode(n);
+        } // remove the nodes
+        for (int nei : sn.neighbors) {
+            g.connect(sn.getKey(), nei, 0);
+        } // connect the neighbors
 
     }
 
@@ -188,14 +192,18 @@ public class Admonds_Algo_Util {
      */
     public void decompress(SuperNode sn) {
 
-    	for(node_info node : sn.original_nodes) { g.addNode(node);}	// restore the nodes
-    	
-    	for(edge_info e : sn.restored_neighbors) {	// restore all edges
-    		g.connect(e.getNodes().getFirst(), e.getNodes().getSecond(), e.getValue());
-    		if(e.isInMatch()) {g.getEdge(e.getNodes().getFirst(), e.getNodes().getSecond()).setInMatch(true);}
-    	}
-    
-    	g.removeNode(sn.getKey());	// remove the super-node
+        for (node_info node : sn.original_nodes) {
+            g.addNode(node);
+        } // restore the nodes
+
+        for (edge_info e : sn.restored_neighbors) { // restore all edges
+            g.connect(e.getNodes().getFirst(), e.getNodes().getSecond(), e.getValue());
+            if (e.isInMatch()) {
+                g.getEdge(e.getNodes().getFirst(), e.getNodes().getSecond()).setInMatch(true);
+            }
+        }
+
+        g.removeNode(sn.getKey()); // remove the super-node
     }
 
     void update_match() { // the algorithm!
@@ -220,7 +228,7 @@ public class Admonds_Algo_Util {
         queue.add(key);
         tree = new WGraph_DS();
         tree.addNode(key);
-        int root=key;
+        int root = key;
 
         while (!queue.isEmpty()) {
             int v = queue.poll();
@@ -228,7 +236,7 @@ public class Admonds_Algo_Util {
                 if (tree.getNode(w.getKey()) == null && !free.contains(w.getKey())) {
                     int nei = getMate(w.getKey());
                     tree.addNode(w.getKey());
-                    tree.connect(v,w.getKey(),0);
+                    tree.connect(v, w.getKey(), 0);
                     tree.addNode(nei);
                     tree.connect(w.getKey(), nei, 0);
                     queue.add(nei);
@@ -238,28 +246,26 @@ public class Admonds_Algo_Util {
                         compress(cycle);
                         int keySuper = g.getHighest_key();
                         queue.add(keySuper);
-                        while (cycle.contains(queue.peek())){
+                        while (cycle.contains(queue.peek())) {
                             queue.poll();
                         }
                         stackSuperNode.push(keySuper);
                         break;
                     }
-                }else if(free.contains(w.getKey())){
-                    int prev=v;
+                } else if (free.contains(w.getKey())) {
+                    int prev = v;
                     System.out.println(prev);
-                    while (!stackSuperNode.isEmpty()){
-                        var sn=(SuperNode)g.getNode(stackSuperNode.pop());
-                        prev=getOrigin(sn,w.getKey());
+                    while (!stackSuperNode.isEmpty()) {
+                        var sn = (SuperNode) g.getNode(stackSuperNode.pop());
+                        prev = getOrigin(sn, w.getKey());
                         decompress(sn);
 
                     }
 
-
                     tree.addNode(w.getKey());
-                    tree.connect(w.getKey(),prev,0);
+                    tree.connect(w.getKey(), prev, 0);
 
-
-                    var path=bfs(w.getKey(),root,tree);
+                    var path = bfs(w.getKey(), root, tree);
                     augment(getPath(path));
                     free.remove(w.getKey());
                     queue.clear();
@@ -267,19 +273,19 @@ public class Admonds_Algo_Util {
                 }
             }
         }
-        while (!stackSuperNode.isEmpty()){
-            var sn=(SuperNode)g.getNode(stackSuperNode.pop());
+        while (!stackSuperNode.isEmpty()) {
+            var sn = (SuperNode) g.getNode(stackSuperNode.pop());
             decompress(sn);
 
         }
     }
 
-    private int getOrigin(SuperNode s,int key){
-        for (edge_info e:s.restored_neighbors) {
-            var nodes=e.getNodes();
-            if(nodes.getFirst()==key){
+    private int getOrigin(SuperNode s, int key) {
+        for (edge_info e : s.restored_neighbors) {
+            var nodes = e.getNodes();
+            if (nodes.getFirst() == key) {
                 return nodes.getSecond();
-            }else if(nodes.getSecond()==key){
+            } else if (nodes.getSecond() == key) {
                 return nodes.getFirst();
             }
 
@@ -287,10 +293,10 @@ public class Admonds_Algo_Util {
         return -1;
     }
 
-    public int getMate(int key){
-        for(edge_info e:match){
-            var nodes=e.getNodes();
-            if(nodes.getFirst()==key){
+    public int getMate(int key) {
+        for (edge_info e : match) {
+            var nodes = e.getNodes();
+            if (nodes.getFirst() == key) {
                 return nodes.getSecond();
             }
             if (nodes.getSecond() == key) {

@@ -198,16 +198,16 @@ public class WGraph_DS implements weighted_graph, Serializable{
      * Note2: if there is already a node with such a key -> no action should be performed.
      * @param key
      */
-    public void addNode(node_info n) {
-    	 if(!this.v.containsKey(n.getKey())){   
-             this.v.put(n.getKey(), n);
-             this.e.put(n.getKey(), new HashMap<node_info, edge_info>());
-             this.MC ++;
-         }
-         if(n.getKey() > this.highest_key){
-             this.highest_key = n.getKey();
-         }
-    }
+    // public void addNode(node_info n) {
+    // 	 if(!this.v.containsKey(n.getKey())){   
+    //          this.v.put(n.getKey(), n);
+    //          this.e.put(n.getKey(), new HashMap<node_info, edge_info>());
+    //          this.MC ++;
+    //      }
+    //      if(n.getKey() > this.highest_key){
+    //          this.highest_key = n.getKey();
+    //      }
+    // }
 
     
     /** 

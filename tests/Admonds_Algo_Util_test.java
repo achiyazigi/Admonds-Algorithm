@@ -72,6 +72,41 @@ public class Admonds_Algo_Util_test {
     }
 
     @Test
+    public void test_SubGraph() {
+        int seed = 0;
+        int nodes = 50;
+        int edges = nodes * 3;
+        weighted_graph g = graph_generator(seed, nodes, edges);
+        weighted_graph sg = new SubGraph(g);
+        assertEquals(sg.getNode(0), null);
+        sg.addNode(0);
+        assertEquals(sg.getNode(0), g.getNode(0));
+        sg.addNode(nodes); // should do nothing since no such node in g...
+        assertEquals(sg.getNode(nodes), null);
+
+        edge_info e = get_random_edge(seed, g);
+        int u = e.getNodes().getFirst();
+        int v = e.getNodes().getSecond();
+        assertFalse(sg.hasEdge(u, v));
+        sg.addNode(u);
+        sg.addNode(v);
+        assertEquals(sg.getNode(u), g.getNode(u));
+        assertEquals(sg.getNode(v), g.getNode(v));
+        sg.connect(u, v, 0);
+        assertEquals(sg.getEdge(u, v), g.getEdge(u, v));
+        assertEquals(1, sg.edgeSize());
+        sg.removeEdge(u, v);
+        assertEquals(0, sg.edgeSize());
+        assertEquals(sg.getEdge(u, v), null);
+        assertTrue(g.hasEdge(u, v));
+
+        g.addNode(nodes);
+        sg.addNode(nodes);
+        assertEquals(sg.getNode(nodes), g.getNode(nodes));
+        nodes++;
+    }
+
+    @Test
     void test_super_node() {
 
         weighted_graph g = build_simple_graph_1();
@@ -265,7 +300,6 @@ public class Admonds_Algo_Util_test {
             assertEquals(nodeEdge.getFirst(), aa.getMate(nodeEdge.getSecond()));
             assertEquals(nodeEdge.getSecond(), aa.getMate(nodeEdge.getFirst()));
 
-
         }
     }
 
@@ -279,28 +313,30 @@ public class Admonds_Algo_Util_test {
 
         Admonds_Algo_Util aa = new Admonds_Algo_Util(g);
         aa.update_match();
-        var match=aa.get_match();
-        assertEquals(2,match.size());
+        var match = aa.get_match();
+        assertEquals(2, match.size());
         nodes = 100;
-         edges = 4217 /* nodes * (nodes - 1) / 2 */;seed = 0;
+        edges = 4217 /* nodes * (nodes - 1) / 2 */;
+        seed = 0;
 
-        weighted_graph big_g = graph_generator(seed, nodes, edges);g = graph_generator(seed, nodes, edges);
-         aa = new Admonds_Algo_Util(big_g);
-         aa.update_match();
-         match=aa.get_match();
-         int count=0;
-         boolean flag=false;
-        for (node_info n:g.getV()) {
-            flag=false;
-            for (edge_info e:match) {
-                var nodeEdge=e.getNodes();
-                if(n.getKey()==nodeEdge.getFirst()||n.getKey()==nodeEdge.getSecond()){
-                    flag=true;
+        weighted_graph big_g = graph_generator(seed, nodes, edges);
+        g = graph_generator(seed, nodes, edges);
+        aa = new Admonds_Algo_Util(big_g);
+        aa.update_match();
+        match = aa.get_match();
+        int count = 0;
+        boolean flag = false;
+        for (node_info n : g.getV()) {
+            flag = false;
+            for (edge_info e : match) {
+                var nodeEdge = e.getNodes();
+                if (n.getKey() == nodeEdge.getFirst() || n.getKey() == nodeEdge.getSecond()) {
+                    flag = true;
                     count++;
                 }
             }
-            if(flag){
-                assertEquals(0,count);
+            if (flag) {
+                assertEquals(0, count);
             }
 
         }
