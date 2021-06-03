@@ -9,6 +9,7 @@ public class Admonds_Algo_Util {
     HashSet<Integer> free;
     HashSet<edge_info> match;
     weighted_graph g;
+    weighted_graph tree;
 
     /**
      * itay, nir this class compresses an odd cycle into one node having all the out
@@ -31,7 +32,7 @@ public class Admonds_Algo_Util {
         private HashSet<node_info> original_nodes = new HashSet<node_info>();
         private HashSet<Integer> neighbors = new HashSet<Integer>();
 
-        SuperNode(List<Integer> keys) {
+        SuperNode(List<Integer> keys ) {
 
             // set the key
             this.key = g.getHighest_key() + 1;
@@ -49,6 +50,7 @@ public class Admonds_Algo_Util {
 
                 this.original_nodes.add(g.getNode(node_id));    // save the node
             }
+
         }
 
         @Override
@@ -142,6 +144,7 @@ public class Admonds_Algo_Util {
     	
     	for(int n : keys) {g.removeNode(n);}	// remove the nodes
     	for(int nei : sn.neighbors) {g.connect(sn.getKey(), nei, 0);}	//connect the neighbors
+
     }
     
     /**
@@ -150,7 +153,7 @@ public class Admonds_Algo_Util {
      */
     public void decompress(SuperNode sn) {
 
-    	for(node_info node : sn.original_nodes) {g.addNode(node);}	// restore the nodes
+    	for(node_info node : sn.original_nodes) { g.addNode(node);}	// restore the nodes
     	
     	for(edge_info e : sn.restored_neighbors) {	// restore all edges
     		g.connect(e.getNodes().getFirst(), e.getNodes().getSecond(), e.getValue());
@@ -180,7 +183,7 @@ public class Admonds_Algo_Util {
         Queue<Integer> queue = new LinkedList<Integer>();
         Stack<Integer> stackSuperNode = new Stack<>();
         queue.add(key);
-        weighted_graph tree = new WGraph_DS();
+        tree = new WGraph_DS();
         tree.addNode(key);
         int root=key;
 
@@ -195,7 +198,7 @@ public class Admonds_Algo_Util {
                     tree.connect(w.getKey(),nei,0);
                     queue.add(nei);
                 }else if(tree.getNode(w.getKey())!=null){
-                    var cycle=bfs(root,w.getKey(),tree);
+                    var cycle=bfs(v,w.getKey(),tree);
                     if (cycle.size()%2==1){
                         compress(cycle);
                         int keySuper=g.getHighest_key();
@@ -208,6 +211,7 @@ public class Admonds_Algo_Util {
                     }
                 }else if(free.contains(w.getKey())){
                     int prev=v;
+                    System.out.println(prev);
                     while (!stackSuperNode.isEmpty()){
                         var sn=(SuperNode)g.getNode(stackSuperNode.pop());
                         prev=getOrigin(sn,w.getKey());
@@ -215,8 +219,10 @@ public class Admonds_Algo_Util {
 
                     }
 
+
                     tree.addNode(w.getKey());
                     tree.connect(w.getKey(),prev,0);
+
 
                     var path=bfs(w.getKey(),root,tree);
                     augment(getPath(path));
