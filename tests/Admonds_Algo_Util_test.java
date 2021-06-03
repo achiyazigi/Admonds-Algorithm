@@ -102,7 +102,31 @@ public class Admonds_Algo_Util_test {
         g.addNode(nodes);
         sg.addNode(nodes);
         assertEquals(sg.getNode(nodes), g.getNode(nodes));
+       
         nodes++;
+
+        e = get_random_edge(seed, g);
+        u = e.getNodes().getFirst();
+        v = e.getNodes().getSecond();
+        sg.addNode(u);
+        sg.addNode(v);
+        assertEquals(sg.getNode(u), g.getNode(u));
+        assertEquals(sg.getNode(v), g.getNode(v));
+        sg.connect(u, v, 0);
+        assertEquals(sg.getEdge(u, v), g.getEdge(u, v));
+        assertEquals(1, sg.edgeSize());
+        g.removeEdge(u, v);
+        // sg would update on the next sg.fuctionCall()!
+        assertFalse(sg.hasEdge(u, v)); //sg checked if the edge still exists in g and removed it!
+        
+        g.connect(u, v, 0);
+        sg.connect(u, v, 0);
+        g.removeNode(u); // g also removed the edge u,v
+        // sg would update on the next sg.fuctionCall()!
+
+        assertFalse(sg.hasEdge(u, v)); // sg checked if the edge still exists in g and removed it!
+        assertEquals(sg.getNode(v), g.getNode(v));
+        assertEquals(sg.getNode(u), null);
     }
 
 //    @Test

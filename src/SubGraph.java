@@ -1,5 +1,7 @@
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 public class SubGraph implements weighted_graph {
     private HashMap<Integer, node_info> sub_nodes;
@@ -32,11 +34,19 @@ public class SubGraph implements weighted_graph {
 
     @Override
     public node_info getNode(int key) {
-        return sub_nodes.get(key);
+        if(g.getNode(key) != null){
+            return sub_nodes.get(key);
+        }
+        removeNode(key);
+        return null;
     }
 
     @Override
     public boolean hasEdge(int node1, int node2) {
+        if(!g.hasEdge(node1, node2)){
+            removeEdge(node1, node2);
+            return false;
+        }
         if(sub_edges.containsKey(node1)){
             return sub_edges.get(node1).containsKey(g.getNode(node2));
         }
@@ -46,10 +56,15 @@ public class SubGraph implements weighted_graph {
     @Override
     public edge_info getEdge(int node1, int node2) {
         if(sub_edges.containsKey(node1)){
-
-            return sub_edges.get(node1).get(g.getNode(node2));
+            if(g.hasEdge(node1, node2)){
+                return sub_edges.get(node1).get(g.getNode(node2));
+            }
+            else{
+                removeEdge(node1, node2);
+            }
         }
         return null;
+        
     }
 
     @Override
@@ -70,7 +85,12 @@ public class SubGraph implements weighted_graph {
 
     @Override
     public Collection<node_info> getV() {
-        return sub_nodes.values();
+        // Set<node_info> s = (Set<node_info>)g.getV();
+        // Set<node_info> sg = (Set<node_info>)sub_nodes.values();
+        // s.
+        Collection<node_info> res = sub_nodes.values();
+        res.retainAll(g.getV());
+        return res;
     }
 
     @Override
@@ -83,23 +103,26 @@ public class SubGraph implements weighted_graph {
 
     @Override
     public node_info removeNode(int key) {
-        node_info to_remove = getNode(key);
+        node_info to_remove = sub_nodes.get(key);
         if (to_remove != null) {
             HashMap<node_info, edge_info> ni = sub_edges.remove(key);
-            edge_counter -= ni.size();
             if (ni != null) {
+                edge_counter -= ni.size();
                 for (node_info n : ni.keySet()) {
                     sub_edges.get(n.getKey()).remove(to_remove);
                 }
             }
             MC++;
         }
+        if(g.getNode(key) == null){
+            return null;
+        }
         return sub_nodes.remove(key);
     }
 
     @Override
     public void removeEdge(int node1, int node2) {
-        if (hasEdge(node1, node2)) {
+        if (sub_edges.containsKey(node1)) {
             edge_counter--;
             MC++;
             sub_edges.get(node1).remove(getNode(node2));
