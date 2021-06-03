@@ -223,75 +223,75 @@ public class Admonds_Algo_Util {
      * @param key
      */
     void bfs(Integer key) { // amichai
-//        Queue<Integer> queue = new LinkedList<Integer>();
-//        Stack<Integer> stackSuperNode = new Stack<>();
-//        queue.add(key);
-//        tree = new WGraph_DS();
-//        tree.addNode(key);
-//        int root = key;
-//
-//        while (!queue.isEmpty()) {
-//            int v = queue.poll();
-//            for (node_info w : g.getV(v)) {
-//                if (tree.getNode(w.getKey()) == null && !free.contains(w.getKey())) {
-//                    int nei = getMate(w.getKey());
-//                    tree.addNode(w.getKey());
-//                    tree.connect(v, w.getKey(), 0);
-//                    tree.addNode(nei);
-//                    tree.connect(w.getKey(), nei, 0);
-//                    queue.add(nei);
-//                } else if (tree.getNode(w.getKey()) != null) {
-//                    var cycle = bfs(v, w.getKey(), tree);
-//                    if (cycle.size() % 2 == 1) {
-//                        compress(cycle);
-//                        int keySuper = g.getHighest_key();
-//                        queue.add(keySuper);
-//                        while (cycle.contains(queue.peek())) {
-//                            queue.poll();
-//                        }
-//                        stackSuperNode.push(keySuper);
-//                        break;
-//                    }
-//                } else if (free.contains(w.getKey())) {
-//                    int prev = v;
-//                    System.out.println(prev);
-//                    while (!stackSuperNode.isEmpty()) {
-//                        var sn = (SuperNode) g.getNode(stackSuperNode.pop());
-//                        prev = getOrigin(sn, w.getKey());
-//                        decompress(sn);
-//
-//                    }
-//
-//                    tree.addNode(w.getKey());
-//                    tree.connect(w.getKey(), prev, 0);
-//
-//                    var path = bfs(w.getKey(), root, tree);
-//                    augment(getPath(path));
-//                    free.remove(w.getKey());
-//                    queue.clear();
-//                    break;
-//                }
-//            }
-//        }
-//        while (!stackSuperNode.isEmpty()) {
-//            var sn = (SuperNode) g.getNode(stackSuperNode.pop());
-//            decompress(sn);
-//
-//        }
+       Queue<Integer> queue = new LinkedList<Integer>();
+       Stack<Integer> stackSuperNode = new Stack<>();
+       queue.add(key);
+       tree = new WGraph_DS();
+       tree.addNode(key);
+       int root = key;
+
+       while (!queue.isEmpty()) {
+           int v = queue.poll();
+           for (node_info w : g.getV(v)) {
+               if (tree.getNode(w.getKey()) == null && !free.contains(w.getKey())) {
+                   int nei = getMate(w.getKey());
+                   tree.addNode(w.getKey());
+                   tree.connect(v, w.getKey(), 0);
+                   tree.addNode(nei);
+                   tree.connect(w.getKey(), nei, 0);
+                   queue.add(nei);
+               } else if (tree.getNode(w.getKey()) != null) {
+                   var cycle = bfs(v, w.getKey(), tree);
+                   if (cycle.size() % 2 == 1) {
+                       compress(cycle);
+                       int keySuper = g.getHighest_key();
+                       queue.add(keySuper);
+                       while (cycle.contains(queue.peek())) {
+                           queue.poll();
+                       }
+                       stackSuperNode.push(keySuper);
+                       break;
+                   }
+               } else if (free.contains(w.getKey())) {
+                   int prev = v;
+                   System.out.println(prev);
+                   while (!stackSuperNode.isEmpty()) {
+                       var sn = (SuperNode) g.getNode(stackSuperNode.pop());
+                       prev = getOrigin(sn, w.getKey());
+                       decompress(sn);
+
+                   }
+
+                   tree.addNode(w.getKey());
+                   tree.connect(w.getKey(), prev, 0);
+
+                   var path = bfs(w.getKey(), root, tree);
+                   augment(getPath(path));
+                   free.remove(w.getKey());
+                   queue.clear();
+                   break;
+               }
+           }
+       }
+       while (!stackSuperNode.isEmpty()) {
+           var sn = (SuperNode) g.getNode(stackSuperNode.pop());
+           decompress(sn);
+
+       }
     }
 
-//    private int getOrigin(SuperNode s, int key) {
-//        for (edge_info e : s.restored_neighbors) {
-//            var nodes = e.getNodes();
-//            if (nodes.getFirst() == key) {
-//                return nodes.getSecond();
-//            } else if (nodes.getSecond() == key) {
-//                return nodes.getFirst();
-//            }
-//
-//        }
-//        return -1;
-//    }
+   private int getOrigin(SuperNode s, int key) {
+    //    for (edge_info e : s.restored_neighbors) {
+    //        var nodes = e.getNodes();
+    //        if (nodes.getFirst() == key) {
+    //            return nodes.getSecond();
+    //        } else if (nodes.getSecond() == key) {
+    //            return nodes.getFirst();
+    //        }
+
+    //    }
+       return -1;
+   }
 
     public int getMate(int key) {
         for (edge_info e : match) {

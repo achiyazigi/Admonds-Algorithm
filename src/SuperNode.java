@@ -1,7 +1,5 @@
 import java.util.*;
 
-import kotlin.Pair;
-
 
 public class SuperNode {
 	
@@ -61,10 +59,6 @@ public class SuperNode {
 		
 		}
 		return decompress; 
-	}
-	
-	public static void main(String[] args) {
-			
 	}
 
 }

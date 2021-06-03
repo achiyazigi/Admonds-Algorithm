@@ -1,7 +1,5 @@
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
 
 public class SubGraph implements weighted_graph {
     private HashMap<Integer, node_info> sub_nodes;
