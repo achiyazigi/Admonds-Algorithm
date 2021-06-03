@@ -46,7 +46,7 @@ public interface weighted_graph {
      * Note2: if there is already a node with such a key -> no action should be performed.
      * @param key
      */
-    public void addNode(node_info n);
+     public void addNode(node_info n);
     
     /**
      * Connect an edge between node1 and node2, with an edge with weight >=0.
