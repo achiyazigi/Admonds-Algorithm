@@ -246,7 +246,23 @@ public class Admonds_Algo_Util_test {
     	ls.add(1);
     	ls.add(2);
     	ls.add(3);
-    	
+    	sup.compress(ls);
+    	assertTrue(h.hasEdge(0,6));
+    	//decompress
+    	sup.decompress(4);
+    	assertTrue(h.nodeSize() == 4);
+    	assertTrue(h.hasEdge(4, 6));
+    	assertTrue(h.hasEdge(4, 0));
+    	assertTrue(h.hasEdge(4, 5));
+    	assertTrue(h.hasEdge(0, 6));
+    	//next decompress
+    	sup.decompress(0);
+    	assertTrue(h.nodeSize() == 7);
+    	assertTrue(h.hasEdge(0, 1));
+    	assertTrue(h.hasEdge(0, 2));
+    	assertTrue(h.hasEdge(0, 3));
+    	assertTrue(h.hasEdge(0, 4));
+
     }
 
     @Test
