@@ -57,7 +57,10 @@ public class SubGraph implements weighted_graph {
         if (g.hasEdge(node1, node2) && sub_nodes.containsKey(node1) && sub_nodes.containsKey(node2)) {
             if (!sub_edges.containsKey(node1)) {
                 sub_edges.put(node1, new HashMap<node_info, edge_info>());
+
+            } if (!sub_edges.containsKey(node2)) {
                 sub_edges.put(node2, new HashMap<node_info, edge_info>());
+
             }
             edge_info e = g.getEdge(node1, node2);
             sub_edges.get(node1).put(g.getNode(node2), e);

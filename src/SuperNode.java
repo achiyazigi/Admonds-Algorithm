@@ -81,6 +81,11 @@ public class SuperNode {
 		}
 		return decompress; 
 	}
+	public void decompressAll(){
+		for (var key:super_nodes.keySet()) {
+			decompress(key);
+		}
+	}
 	
 
 }
