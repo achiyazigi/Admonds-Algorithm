@@ -422,30 +422,19 @@ public class Admonds_Algo_Util_test {
 
     @Test
     public void mainBfs() {
-        int nodes = 4;
-        int edges = 6 /* nodes * (nodes - 1) / 2 */;
         int seed = 0;
         Random r = new Random(seed);
-        weighted_graph g = graph_generator(seed, nodes, edges);
+        int  nodes = 100;
+        int edges = 4217 /* nodes * (nodes - 1) / 2 */;
 
-        Admonds_Algo_Util aa = new Admonds_Algo_Util(g);
-        aa.update_match();
-        var match = aa.get_match();
-        assertEquals(2, match.size());
-        nodes = 100;
-        edges = 4217 /* nodes * (nodes - 1) / 2 */;
-        seed = 0;
-         edges = 4217 /* nodes * (nodes - 1) / 2 */;
-         seed = 0;
 
         weighted_graph big_g = graph_generator(seed, nodes, edges);
-        g = graph_generator(seed, nodes, edges);
-        aa = new Admonds_Algo_Util(big_g);
+        var aa = new Admonds_Algo_Util(big_g);
         aa.update_match();
-        match = aa.get_match();
+       var match = aa.get_match();
         int count = 0;
         boolean flag = false;
-        for (node_info n : g.getV()) {
+        for (node_info n : big_g.getV()) {
             flag = false;
             for (edge_info e : match) {
                 var nodeEdge = e.getNodes();

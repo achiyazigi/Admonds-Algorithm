@@ -6,7 +6,7 @@ public class Admonds_Algo_Util {
     HashSet<Integer> free;
     HashSet<edge_info> match;
     weighted_graph g;
-    weighted_graph tree;
+
 
     
 
@@ -215,6 +215,7 @@ public class Admonds_Algo_Util {
             free.remove(root);
             bfs(root);
         }
+        System.out.println(match);
     }
 
     /**
@@ -228,8 +229,6 @@ public class Admonds_Algo_Util {
         queue.add(key);
         SubGraph tree = new SubGraph(g);
         SuperNode sn = new SuperNode(g);
-
-
         tree.addNode(key);
         int root = key;
 
@@ -239,7 +238,12 @@ public class Admonds_Algo_Util {
                 continue;
             }
             for (node_info w : g.getV(v)) {
+                if (tree.getEdge(v,w.getKey())!=null){//if w is a neighbor in the graph and in the tree so continue
+
+                    continue;
+                }
                 // if w not in tree and w is not free:
+
                 if (tree.getNode(w.getKey()) == null && !free.contains(w.getKey())) {
                     System.out.println("r="+root+" v="+v+" w="+w.getKey());
                     int nei = getMate(w.getKey());
@@ -249,6 +253,7 @@ public class Admonds_Algo_Util {
                     tree.addNode(nei);
                     tree.connect(w.getKey(), nei, 0);
                     queue.add(nei);
+
                 }
                 // if w in the tree ((w,v) closes a cycle): 
                 else if (tree.getNode(w.getKey()) != null) {
@@ -256,32 +261,22 @@ public class Admonds_Algo_Util {
                     // if (w,v) closes an odd cycle:
                     if (cycle.size() % 2 == 1) {
                         tree.connect(v,w.getKey(),0);
-                        Collections.reverse(cycle);
+                        cycle.addFirst(cycle.removeLast());//add the last node in the cycle to be the represent of the supernode
                         // create a super node:
                         sn.compress(cycle);
-
                         queue.add(v);
-                        stackSuperNode.push(sn);
                         break;
                     }
                 }
                 // if w not in tree and free (augmenting path found!):
                 else if (free.contains(w.getKey())) {
-
-//                    System.out.println(prev);
-//                    while (!stackSuperNode.isEmpty()) {
-//                        var sn1 = stackSuperNode.pop();
-////                        prev = getOrigin(sn, w.getKey());
-//                        decompress(sn);
-//
-//                    }
-                    sn.decompressAll();
-
                     tree.addNode(w.getKey());
                     tree.connect(w.getKey(), v, 0);
 
+                    sn.decompressAll();
+
                     var path = backTracking(w.getKey(), root, tree);
-                    augment(getPath(path));
+                    augment(path);
                     free.remove(w.getKey());
                     queue.clear();
                     break;
@@ -292,19 +287,22 @@ public class Admonds_Algo_Util {
         sn.decompressAll();
 
     }
-    public List<Integer> backTracking(int src,int dest,weighted_graph tree){
+    public List<edge_info> backTracking(int src,int dest,weighted_graph tree){
         int curr=src;
-        var path=new LinkedList<Integer>();
-        int prev = -1;
-        
-        path.add(curr);
+
+        var path=new LinkedList<edge_info>();
+
         while(curr!=dest){
+
             var nei=tree.getV(curr);
             if(nei.size()==1){
-                curr=nei.iterator().next().getKey();
+                int temp=nei.iterator().next().getKey();//get neighbor and add the edge to the path
+                path.add(tree.getEdge(curr,temp));
+                curr=temp;
             }else if(nei.size()==2){
                 for (node_info n : nei) {
-                    if(n.getKey() != prev){
+                    if(tree.getEdge(n.getKey(),curr) != path.getLast()){
+                        path.add(tree.getEdge(n.getKey(),curr));
                         curr = n.getKey();
                         break;
                     }
@@ -312,10 +310,11 @@ public class Admonds_Algo_Util {
             }
             // a junction in the tree
             else{
-                curr = getMate(curr);
+                int mate=getMate(curr);
+                path.add(tree.getEdge(mate,curr));
+                curr = mate;
             }
-            prev = path.getLast();
-            path.add(curr);
+
         }
         return path;
 
