@@ -303,7 +303,7 @@ public class Admonds_Algo_Util {
                         curr=n;
                     }
                 }
-            }else if(nei.size()==3){
+            }else if(nei.size()>=3){
                 for (var n:nei) {
                     if(n.getKey()!=path.peek()&&tree.getEdge(curr.getKey(),n.getKey()).isInMatch()){
                         curr=n;
