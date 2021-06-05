@@ -195,7 +195,7 @@ public class Admonds_Algo_Util_test {
 
         return g;
     }
-    
+
     @Test
     public void test_SuperNode() {
     	//check star graph
@@ -236,7 +236,7 @@ public class Admonds_Algo_Util_test {
     	sn.decompress(4);
     	assertEquals(4, g.nodeSize());
     	assertEquals(4, g.edgeSize());
-    	//check is in match 
+    	//check is in match
     	assertTrue(g.getEdge(0,4).isInMatch());
     	assertTrue(g.getEdge(4,5).isInMatch());
     	assertFalse(g.getEdge(5,6).isInMatch());
@@ -270,7 +270,23 @@ public class Admonds_Algo_Util_test {
     	ls.add(1);
     	ls.add(2);
     	ls.add(3);
-    	
+    	sup.compress(ls);
+    	assertTrue(h.hasEdge(0,6));
+    	//decompress
+    	sup.decompress(4);
+    	assertTrue(h.nodeSize() == 4);
+    	assertTrue(h.hasEdge(4, 6));
+    	assertTrue(h.hasEdge(4, 0));
+    	assertTrue(h.hasEdge(4, 5));
+    	assertTrue(h.hasEdge(0, 6));
+    	//next decompress
+    	sup.decompress(0);
+    	assertTrue(h.nodeSize() == 7);
+    	assertTrue(h.hasEdge(0, 1));
+    	assertTrue(h.hasEdge(0, 2));
+    	assertTrue(h.hasEdge(0, 3));
+    	assertTrue(h.hasEdge(0, 4));
+
     }
 
     @Test
@@ -400,6 +416,7 @@ public class Admonds_Algo_Util_test {
             assertEquals(nodeEdge.getFirst(), aa.getMate(nodeEdge.getSecond()));
             assertEquals(nodeEdge.getSecond(), aa.getMate(nodeEdge.getFirst()));
 
+
         }
     }
 
@@ -418,6 +435,8 @@ public class Admonds_Algo_Util_test {
         nodes = 100;
         edges = 4217 /* nodes * (nodes - 1) / 2 */;
         seed = 0;
+         edges = 4217 /* nodes * (nodes - 1) / 2 */;
+         seed = 0;
 
         weighted_graph big_g = graph_generator(seed, nodes, edges);
         g = graph_generator(seed, nodes, edges);
@@ -436,7 +455,7 @@ public class Admonds_Algo_Util_test {
                 }
             }
             if (flag) {
-                assertEquals(0, count);
+                assertEquals(1, count);
             }
 
         }
