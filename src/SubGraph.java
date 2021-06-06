@@ -10,11 +10,11 @@ public class SubGraph implements weighted_graph {
     private weighted_graph g;
 
     /**
-     * this class represents a sub graph over g.
-     * on construction the sub graph will be an empty graph.
-     * this model restricts you from adding nodes and edges not included in g.
-     * also, it checks for removals of the above in g and update this subgraph as expected
-     * the update happens on a structure fanction call
+     * this class represents a sub graph over g. on construction the sub graph will
+     * be an empty graph. this model restricts you from adding nodes and edges not
+     * included in g. also, it checks for removals of the above in g and update this
+     * subgraph as expected the update happens on a structure fanction call
+     * 
      * @param g
      */
     public SubGraph(weighted_graph g) {
@@ -41,11 +41,13 @@ public class SubGraph implements weighted_graph {
         }
     }
 
-
     @Override
     public node_info getNode(int key) {
-        if(g.getNode(key) != null){
-            return sub_nodes.get(key);
+        if (g.getNode(key) != null) {
+            if (sub_nodes.containsKey(key)) {
+
+                return g.getNode(key);
+            }
         }
         removeNode(key);
         return null;
@@ -53,11 +55,11 @@ public class SubGraph implements weighted_graph {
 
     @Override
     public boolean hasEdge(int node1, int node2) {
-        if(!g.hasEdge(node1, node2)){
+        if (!g.hasEdge(node1, node2)) {
             removeEdge(node1, node2);
             return false;
         }
-        if(sub_edges.containsKey(node1)){
+        if (sub_edges.containsKey(node1)) {
             return sub_edges.get(node1).containsKey(g.getNode(node2));
         }
         return false;
@@ -65,21 +67,22 @@ public class SubGraph implements weighted_graph {
 
     @Override
     public edge_info getEdge(int node1, int node2) {
-        if(sub_edges.containsKey(node1)){
-            if(g.hasEdge(node1, node2)){
-                return sub_edges.get(node1).get(g.getNode(node2));
-            }
-            else{
+        if (sub_edges.containsKey(node1)) {
+            if (g.hasEdge(node1, node2)) {
+                if (hasEdge(node1, node2)) {
+                    return g.getEdge(node1, node2);
+                }
+            } else {
                 removeEdge(node1, node2);
             }
         }
         return null;
-        
+
     }
 
     /**
-     * only edges included in g allowed.
-     * the nodes (node1, node2) should be added first
+     * only edges included in g allowed. the nodes (node1, node2) should be added
+     * first
      */
     @Override
     public void connect(int node1, int node2, double w) {
@@ -87,17 +90,28 @@ public class SubGraph implements weighted_graph {
             if (!sub_edges.containsKey(node1)) {
                 sub_edges.put(node1, new HashMap<node_info, edge_info>());
 
-            } if (!sub_edges.containsKey(node2)) {
+            }
+            if (!sub_edges.containsKey(node2)) {
                 sub_edges.put(node2, new HashMap<node_info, edge_info>());
 
             }
-            edge_info e = g.getEdge(node1, node2);
-            sub_edges.get(node1).put(g.getNode(node2), e);
-            sub_edges.get(node2).put(g.getNode(node1), e);
-            edge_counter++;
-            MC++;
+            if(!sub_edges.get(node1).containsKey(getNode(node2))){
+                edge_info e = g.getEdge(node1, node2);
+                sub_edges.get(node1).put(g.getNode(node2), e);
+                sub_edges.get(node2).put(g.getNode(node1), e);
+                edge_counter++;
+                MC++;
+            }
+        }
+        else{
+            removeEdge(node1, node2);
         }
 
+    }
+
+    @Override
+    public void connect(edge_info edge) {
+        connect(edge.getNodes().getFirst(), edge.getNodes().getSecond(), edge.getValue());
     }
 
     @Override
@@ -112,10 +126,10 @@ public class SubGraph implements weighted_graph {
      */
     @Override
     public Collection<node_info> getV(int node_id) {
-        if(g.getNode(node_id) == null){
+        if (g.getNode(node_id) == null) {
             removeNode(node_id);
         }
-        if (sub_nodes.containsKey(node_id)) {
+        if (sub_edges.containsKey(node_id)) {
             return sub_edges.get(node_id).keySet();
         }
         return null;
@@ -137,7 +151,7 @@ public class SubGraph implements weighted_graph {
             }
             MC++;
         }
-        if(g.getNode(key) == null){
+        if (g.getNode(key) == null) {
             return null;
         }
         return sub_nodes.remove(key);
@@ -181,9 +195,9 @@ public class SubGraph implements weighted_graph {
         this.highest_key = highest_key;
     }
 
-	@Override
-	public void addNode(node_info n) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void addNode(node_info n) {
+        // TODO Auto-generated method stub
+
+    }
 }

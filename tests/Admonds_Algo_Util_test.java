@@ -207,7 +207,7 @@ public class Admonds_Algo_Util_test {
     	g.connect(0,1, 0);
     	g.connect(0,2, 0);
     	g.connect(0,3, 0);
-    	SuperNode sn = new SuperNode(g);
+    	SuperNode sn = new SuperNode(g, new WGraph_DS());
     	LinkedList<Integer> ls = new LinkedList<Integer>();
     	ls.add(0);
     	ls.add(1);
@@ -243,7 +243,7 @@ public class Admonds_Algo_Util_test {
     	assertFalse(g.getEdge(6,4).isInMatch());
     	//decompress
     	weighted_graph h = new WGraph_DS();
-    	SuperNode sup = new SuperNode(h);
+    	SuperNode sup = new SuperNode(h, new WGraph_DS());
     	h.addNode(0);
     	h.addNode(1);
     	h.addNode(2);
@@ -423,7 +423,6 @@ public class Admonds_Algo_Util_test {
     @Test
     public void mainBfs() {
         int seed = 0;
-        Random r = new Random(seed);
         int  nodes = 100;
         int edges = 4217 /* nodes * (nodes - 1) / 2 */;
 
@@ -445,6 +444,7 @@ public class Admonds_Algo_Util_test {
             }
             if (flag) {
                 assertEquals(1, count);
+                count = 0;
             }
 
         }

@@ -6,106 +6,9 @@ public class Admonds_Algo_Util {
     HashSet<Integer> free;
     HashSet<edge_info> match;
     weighted_graph g;
-
+    weighted_graph tree;
 
     
-
-    /**
-     * itay, nir this class compresses an odd cycle into one node having all the out
-     * edges from the original cycle, as out edges of the super node if multiple out
-     * edges have the same dest, only one edge will be considered. NOTE! this class
-     * temporary changes the graph presented in the gui so its important to reset to
-     * original state when its done... e.g. after update_match() and before
-     * get_match() called
-     */
-//     class SuperNode implements node_info {
-
-//     private int key;
-//     private String info;
-//     private double tag;
-//     private int x;
-//     private int y;
-//     private int color = 0;
-
-//     private HashSet<edge_info> restored_neighbors = new HashSet<edge_info>();
-//     private HashSet<node_info> original_nodes = new HashSet<node_info>();
-//     private HashSet<Integer> neighbors = new HashSet<Integer>();
-
-    // SuperNode(List<Integer> keys ) {
-
-    // // set the key
-    // this.key = g.getHighest_key() + 1;
-
-    // // save the data of the nodes
-    // for (int node_id : keys) {
-
-    // for (node_info nei : g.getV(node_id)) { // neighbors
-    // this.restored_neighbors.add(g.getEdge(node_id, nei.getKey()));
-    // if (!keys.contains(nei.getKey())) {
-    // this.neighbors.add(nei.getKey());
-    // }
-    // }
-
-    // this.original_nodes.add(g.getNode(node_id)); // save the node
-    // }
-
-    // }
-
-    // @Override
-    // public int getKey() {
-    // return this.key;
-    // }
-
-    // @Override
-    // public String getInfo() {
-    // return this.info;
-    // }
-
-    // @Override
-    // public void setInfo(String s) {
-    // this.info = s;
-    // }
-
-    // @Override
-    // public double getTag() {
-    // return this.tag;
-    // }
-
-    // @Override
-    // public void setTag(double t) {
-    // this.tag = t;
-    // }
-
-    // @Override
-    // public void setX(int x) {
-    // this.x = x;
-    // }
-
-    // @Override
-    // public void setY(int y) {
-    // this.key = y;
-    // }
-
-    // @Override
-    // public int X() {
-    // return this.x;
-    // }
-
-    // @Override
-    // public int Y() {
-    // return this.y;
-    // }
-
-    // @Override
-    // public int getColor() {
-    // return this.color;
-    // }
-
-    // @Override
-    // public void setColor(int color) {
-    // this.color = color;
-    // }
-    // }
 
     Admonds_Algo_Util(weighted_graph g) {
         this.free = new HashSet<>();
@@ -166,46 +69,6 @@ public class Admonds_Algo_Util {
         return this.match;
     }
 
-    /**
-     * compress the nodes given to a super-node
-     * 
-     * @param keys
-     */
-    void compress(List<Integer> keys) {
-//        SuperNode sn = new SuperNode(keys);
-//
-//        g.addNode(sn); // add to the graph
-//
-//        for (int n : keys) {
-//            g.removeNode(n);
-//        } // remove the nodes
-//        for (int nei : sn.neighbors) {
-//            g.connect(sn.getKey(), nei, 0);
-//        } // connect the neighbors
-
-    }
-
-    /**
-     * de-compress a super-node to the original nodes
-     * 
-     * @param sn
-     */
-    public void decompress(SuperNode sn) {
-//
-//        for (node_info node : sn.original_nodes) {
-//            g.addNode(node);
-//        } // restore the nodes
-//
-//        for (edge_info e : sn.restored_neighbors) { // restore all edges
-//            g.connect(e.getNodes().getFirst(), e.getNodes().getSecond(), e.getValue());
-//            if (e.isInMatch()) {
-//                g.getEdge(e.getNodes().getFirst(), e.getNodes().getSecond()).setInMatch(true);
-//            }
-//        }
-//
-//        g.removeNode(sn.getKey()); // remove the super-node
-    }
-
     void update_match() { // the algorithm!
 
         System.out.println("Starting bfs!"); // just for indication the button pressed...
@@ -215,124 +78,91 @@ public class Admonds_Algo_Util {
             free.remove(root);
             bfs(root);
         }
-        System.out.println(match);
     }
 
-    /**
-     * finding augmenting path from key and calling augment
-     * 
-     * @param key
-     */
-    void bfs(Integer key) { // amichai
-        Queue<Integer> queue = new LinkedList<Integer>();
-        Stack<SuperNode> stackSuperNode = new Stack<>();
-        queue.add(key);
-        SubGraph tree = new SubGraph(g);
-        SuperNode sn = new SuperNode(g);
-        tree.addNode(key);
-        int root = key;
-
-        while (!queue.isEmpty()) {
-            int v = queue.poll();
-            if(g.getNode(v)==null){
-                continue;
-            }
-            for (node_info w : g.getV(v)) {
-                if (tree.getEdge(v,w.getKey())!=null){//if w is a neighbor in the graph and in the tree so continue
-
-                    continue;
-                }
-                // if w not in tree and w is not free:
-
-                if (tree.getNode(w.getKey()) == null && !free.contains(w.getKey())) {
-                    System.out.println("r="+root+" v="+v+" w="+w.getKey());
-                    int nei = getMate(w.getKey());
-                    System.out.println("v="+v+" w="+w.getKey()+" nei="+nei);
-                    tree.addNode(w.getKey());
-                    tree.connect(v, w.getKey(), 0);
-                    tree.addNode(nei);
-                    tree.connect(w.getKey(), nei, 0);
-                    queue.add(nei);
+ 
+    public void bfs(int root) {
+        Queue<Integer> q = new LinkedList<Integer>();
+        HashSet<Integer> visited = new HashSet<>();
+        weighted_graph tree = new WGraph_DS();
+        SuperNode sn = new SuperNode(g, tree);
+        tree.addNode(root);
+        q.add(root);
+        while (!q.isEmpty()) {
+            int cur = q.poll();
+            tree.addNode(cur);
+            visited.add(cur);
+            for (node_info ni : g.getV(cur)) {
+                int kni = ni.getKey();
+                edge_info e = g.getEdge(cur, kni);
+                int ni_mate = getMate(kni);
+                // ni not in tree and ni in match
+                if (!visited.contains(kni) && ni_mate != -1) {
+                    q.add(ni_mate);
+                    tree.addNode(kni);
+                    tree.connect(e);
+                    tree.addNode(ni_mate);
+                    tree.connect(g.getEdge(kni, ni_mate));
+                    visited.add(kni);
+                    visited.add(ni_mate);
 
                 }
-                // if w in the tree ((w,v) closes a cycle): 
-                else if (tree.getNode(w.getKey()) != null) {
-                    var cycle = bfs(v, w.getKey(), tree);
-                    // if (w,v) closes an odd cycle:
-                    if (cycle.size() % 2 == 1) {
-                        tree.connect(v,w.getKey(),0);
-                        cycle.addFirst(cycle.removeLast());//add the last node in the cycle to be the represent of the supernode
-                        // create a super node:
+
+                // ni in tree and free
+                else if (visited.contains(kni) && ni_mate == -1) {
+                    var cycle = bfs(cur, kni, tree);
+                    if (cycle.size() % 2 != 0) {
+                        // close the cycle!
+
                         sn.compress(cycle);
-                        queue.add(v);
+                        q.add(cur);
                         break;
                     }
                 }
-                // if w not in tree and free (augmenting path found!):
-                else if (free.contains(w.getKey())) {
-                    tree.addNode(w.getKey());
-                    tree.connect(w.getKey(), v, 0);
-
+                // ni not in tree and free, aug path found!
+                else if (ni_mate == -1) {
+                    tree.addNode(kni);
+                    tree.connect(g.getEdge(cur, kni));
                     sn.decompressAll();
-
-                    var path = backTracking(w.getKey(), root, tree);
+                    var path = getPath(backTracking(kni, root, tree));
                     augment(path);
-                    free.remove(w.getKey());
-                    queue.clear();
+                    free.remove(kni);
+                    q.clear();
                     break;
                 }
             }
         }
-
         sn.decompressAll();
-
     }
-    public List<edge_info> backTracking(int src,int dest,weighted_graph tree){
-        int curr=src;
 
-        var path=new LinkedList<edge_info>();
+    public List<Integer> backTracking(int src, int dest, weighted_graph tree) {
+        int curr = src;
+        var path = new LinkedList<Integer>();
+        int prev = -1;
 
-        while(curr!=dest){
-
-            var nei=tree.getV(curr);
-            if(nei.size()==1){
-                int temp=nei.iterator().next().getKey();//get neighbor and add the edge to the path
-                path.add(tree.getEdge(curr,temp));
-                curr=temp;
-            }else if(nei.size()==2){
+        path.add(curr);
+        while (curr != dest) {
+            var nei = tree.getV(curr);
+            if (nei.size() == 1) {
+                curr = nei.iterator().next().getKey();
+            } else if (nei.size() == 2) {
                 for (node_info n : nei) {
-                    if(tree.getEdge(n.getKey(),curr) != path.getLast()){
-                        path.add(tree.getEdge(n.getKey(),curr));
+                    if (n.getKey() != prev) {
                         curr = n.getKey();
                         break;
                     }
                 }
             }
             // a junction in the tree
-            else{
-                int mate=getMate(curr);
-                path.add(tree.getEdge(mate,curr));
-                curr = mate;
+            else {
+                curr = getMate(curr);
             }
-
+            prev = path.getLast();
+            path.add(curr);
         }
         return path;
 
-
     }
-
-   private int getOrigin(SuperNode s, int key) {
-    //    for (edge_info e : s.restored_neighbors) {
-    //        var nodes = e.getNodes();
-    //        if (nodes.getFirst() == key) {
-    //            return nodes.getSecond();
-    //        } else if (nodes.getSecond() == key) {
-    //            return nodes.getFirst();
-    //        }
-
-    //    }
-       return -1;
-   }
 
     public int getMate(int key) {
         for (edge_info e : match) {
@@ -371,6 +201,8 @@ public class Admonds_Algo_Util {
             e.setInMatch(!e.isInMatch());
             if (e.isInMatch()) {
                 this.match.add(e);
+            } else {
+                this.match.remove(e);
             }
         });
     }

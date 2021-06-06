@@ -54,6 +54,7 @@ public interface weighted_graph {
      * Note2: if the edge node1-node2 already exists - the method simply updates the weight of the edge.
      */
     public void connect(int node1, int node2, double w);
+    public void connect(edge_info edge);
     /**
      * This method return a pointer (shallow copy) for a
      * Collection representing all the nodes in the graph.

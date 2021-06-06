@@ -1,5 +1,6 @@
 
 import java.io.Serializable;
+import java.lang.annotation.Retention;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -235,6 +236,22 @@ public class WGraph_DS implements weighted_graph, Serializable{
     }
 
     
+    @Override
+    public void connect(edge_info edge){
+        if(edge == null){return;}
+        int u = edge.getNodes().getFirst();
+        int v = edge.getNodes().getSecond();
+        if(u == v){return;}
+        if(this.v.containsKey(u) && this.v.containsKey(v)){
+            if(!hasEdge(u, v)){
+                this.edges++;
+            }
+            this.e.get(u).put(getNode(v), edge);
+            this.e.get(v).put(getNode(u), edge);
+            this.MC++;
+        }
+    }
+
     /** 
      * A method to get all nodes in the graph.
      * @return Collection<node_info>
