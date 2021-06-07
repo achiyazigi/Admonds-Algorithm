@@ -1,6 +1,5 @@
 
 import java.io.Serializable;
-import java.lang.annotation.Retention;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;

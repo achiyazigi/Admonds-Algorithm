@@ -10,6 +10,7 @@ public class edge_info implements Serializable{
     private Pair<Integer,Integer> nodes;
     private double value;
     private boolean inMatch;
+    private String info;
 
     public edge_info(){}
 
@@ -41,6 +42,14 @@ public class edge_info implements Serializable{
     }
     public void setInMatch(boolean inMatch) {
         this.inMatch = inMatch;
+    }
+
+    public String getInfo(){
+        return this.info;
+    }
+
+    public void setInfo(String info){
+        this.info = info;
     }
 
     @Override

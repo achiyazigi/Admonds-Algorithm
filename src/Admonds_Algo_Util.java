@@ -71,8 +71,6 @@ public class Admonds_Algo_Util {
 
     void update_match() { // the algorithm!
 
-        System.out.println("Starting bfs!"); // just for indication the button pressed...
-
         while (!this.free.isEmpty()) {
             int root = free.iterator().next();
             free.remove(root);
@@ -89,20 +87,35 @@ public class Admonds_Algo_Util {
         tree.addNode(root);
         q.add(root);
         while (!q.isEmpty()) {
+            // pop head of queue
             int cur = q.poll();
+
+            // maybe unnecesery...
             tree.addNode(cur);
+
+            // mark visited
             visited.add(cur);
+
+            // iterate on cur neighbors
             for (node_info ni : g.getV(cur)) {
                 int kni = ni.getKey();
                 edge_info e = g.getEdge(cur, kni);
+
+                // ni_mate will indicate the match of ni, -1 if ni not in match
                 int ni_mate = getMate(kni);
+
                 // ni not in tree and ni in match
                 if (!visited.contains(kni) && ni_mate != -1) {
+                    // add mate to queue
                     q.add(ni_mate);
+
+                    // add ni and mate to tree
                     tree.addNode(kni);
                     tree.connect(e);
                     tree.addNode(ni_mate);
                     tree.connect(g.getEdge(kni, ni_mate));
+
+                    // mark visited
                     visited.add(kni);
                     visited.add(ni_mate);
 
@@ -111,21 +124,30 @@ public class Admonds_Algo_Util {
                 // ni in tree and free
                 else if (visited.contains(kni) && ni_mate == -1) {
                     var cycle = bfs(cur, kni, tree);
+                    // detect odd cycle
                     if (cycle.size() % 2 != 0) {
-                        // close the cycle!
-
+                        // compress the odd cycle
                         sn.compress(cycle);
+                        // add the super node to queue
                         q.add(cur);
                         break;
                     }
                 }
                 // ni not in tree and free, aug path found!
                 else if (ni_mate == -1) {
+                    // connect the destination point
                     tree.addNode(kni);
                     tree.connect(g.getEdge(cur, kni));
+
+                    // decompress all
                     sn.decompressAll();
+
+                    // back track on tree
                     var path = getPath(backTracking(kni, root, tree));
+
+                    // augment
                     augment(path);
+
                     free.remove(kni);
                     q.clear();
                     break;
@@ -135,6 +157,13 @@ public class Admonds_Algo_Util {
         sn.decompressAll();
     }
 
+    /**
+     * perform a backtrack on the tree, favorating mates in tree junctions
+     * @param src
+     * @param dest
+     * @param tree
+     * @return
+     */
     public List<Integer> backTracking(int src, int dest, weighted_graph tree) {
         int curr = src;
         var path = new LinkedList<Integer>();
@@ -146,6 +175,8 @@ public class Admonds_Algo_Util {
             if (nei.size() == 1) {
                 curr = nei.iterator().next().getKey();
             } else if (nei.size() == 2) {
+
+                // go forward, not backward
                 for (node_info n : nei) {
                     if (n.getKey() != prev) {
                         curr = n.getKey();
@@ -155,8 +186,10 @@ public class Admonds_Algo_Util {
             }
             // a junction in the tree
             else {
+                // go to mate, only 1 option as your mate is your parent
                 curr = getMate(curr);
             }
+
             prev = path.getLast();
             path.add(curr);
         }
