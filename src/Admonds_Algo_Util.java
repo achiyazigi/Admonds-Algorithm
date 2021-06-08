@@ -74,12 +74,16 @@ public class Admonds_Algo_Util {
         while (!this.free.isEmpty()) {
             int root = free.iterator().next();
             free.remove(root);
-            bfs(root);
+            mainBfs(root);
         }
     }
 
- 
-    public void bfs(int root) {
+    /***
+     * perform the main bfs of the admonds algorithm.
+     * build a bfs tree from a given root (node), allowing a backtracking on the tree.
+     * @param root
+     */
+    public void mainBfs(int root) {
         Queue<Integer> q = new LinkedList<Integer>();
         HashSet<Integer> visited = new HashSet<>();
         weighted_graph tree = new WGraph_DS();
@@ -123,7 +127,7 @@ public class Admonds_Algo_Util {
 
                 // ni in tree and free
                 else if (visited.contains(kni) && ni_mate == -1) {
-                    var cycle = bfs(cur, kni, tree);
+                    var cycle = mainBfs(cur, kni, tree);
                     // detect odd cycle
                     if (cycle.size() % 2 != 0) {
                         // compress the odd cycle
@@ -197,6 +201,10 @@ public class Admonds_Algo_Util {
 
     }
 
+    /***
+     * @param key -key node
+     * @return -the mate of a given key node.
+     */
     public int getMate(int key) {
         for (edge_info e : match) {
             var nodes = e.getNodes();
@@ -246,7 +254,7 @@ public class Admonds_Algo_Util {
      *            node her tag will be with -1 the path kept in the hash map and
      *            convert to linked list
      */
-    private LinkedList<Integer> bfs(int src, int dest, weighted_graph graph) {
+    private LinkedList<Integer> mainBfs(int src, int dest, weighted_graph graph) {
         if (graph.getV().isEmpty()) // check if it is empty graph
             return new LinkedList<Integer>();
 
@@ -296,7 +304,7 @@ public class Admonds_Algo_Util {
     List<Integer> identify_cyc(weighted_graph tree, int src, int dest) { // evyatar
         if (src == dest) // havn't path
             return new LinkedList<Integer>(); // return empty linked list
-        LinkedList<Integer> path = bfs(src, dest, tree);
+        LinkedList<Integer> path = mainBfs(src, dest, tree);
         return path;
     }
 }
