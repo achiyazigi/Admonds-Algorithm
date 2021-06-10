@@ -8,8 +8,6 @@ public class Admonds_Algo_Util {
     weighted_graph g;
     weighted_graph tree;
 
-    
-
     Admonds_Algo_Util(weighted_graph g) {
         this.free = new HashSet<>();
         this.match = new HashSet<>();
@@ -32,6 +30,7 @@ public class Admonds_Algo_Util {
      * init called and edges added after last match update
      */
     private void set_free() {
+        this.free.clear();
         this.g.getV().forEach((e) -> {
             this.free.add(e.getKey());
         });
@@ -79,8 +78,9 @@ public class Admonds_Algo_Util {
     }
 
     /***
-     * perform the main bfs of the admonds algorithm.
-     * build a bfs tree from a given root (node), allowing a backtracking on the tree.
+     * perform the main bfs of the admonds algorithm. build a bfs tree from a given
+     * root (node), allowing a backtracking on the tree.
+     * 
      * @param root
      */
     public void mainBfs(int root) {
@@ -94,7 +94,6 @@ public class Admonds_Algo_Util {
             // pop head of queue
             int cur = q.poll();
 
-            // maybe unnecesery...
             tree.addNode(cur);
 
             // mark visited
@@ -127,7 +126,7 @@ public class Admonds_Algo_Util {
 
                 // ni in tree and free
                 else if (visited.contains(kni) && ni_mate == -1) {
-                    var cycle = mainBfs(cur, kni, tree);
+                    var cycle = bfs(cur, kni, tree);
                     // detect odd cycle
                     if (cycle.size() % 2 != 0) {
                         // compress the odd cycle
@@ -163,6 +162,7 @@ public class Admonds_Algo_Util {
 
     /**
      * perform a backtrack on the tree, favorating mates in tree junctions
+     * 
      * @param src
      * @param dest
      * @param tree
@@ -177,6 +177,7 @@ public class Admonds_Algo_Util {
         while (curr != dest) {
             var nei = tree.getV(curr);
             if (nei.size() == 1) {
+                // only one way to go
                 curr = nei.iterator().next().getKey();
             } else if (nei.size() == 2) {
 
@@ -254,7 +255,7 @@ public class Admonds_Algo_Util {
      *            node her tag will be with -1 the path kept in the hash map and
      *            convert to linked list
      */
-    private LinkedList<Integer> mainBfs(int src, int dest, weighted_graph graph) {
+    private LinkedList<Integer> bfs(int src, int dest, weighted_graph graph) {
         if (graph.getV().isEmpty()) // check if it is empty graph
             return new LinkedList<Integer>();
 
@@ -304,7 +305,7 @@ public class Admonds_Algo_Util {
     List<Integer> identify_cyc(weighted_graph tree, int src, int dest) { // evyatar
         if (src == dest) // havn't path
             return new LinkedList<Integer>(); // return empty linked list
-        LinkedList<Integer> path = mainBfs(src, dest, tree);
+        LinkedList<Integer> path = bfs(src, dest, tree);
         return path;
     }
 }

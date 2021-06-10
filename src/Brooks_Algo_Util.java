@@ -349,18 +349,18 @@ public class Brooks_Algo_Util {
      * @return list - an order of the nodes as the last node is the root
      **/
     protected List<Integer> spanningTreeOrder(weighted_graph g, int root){ // - Eviatar
-    	weighted_graph ch = new WGraph_DS();
+    	weighted_graph tree = new WGraph_DS();
     	for(node_info node:g.getV()) {	 //create new graph with the same nodes 
-    		ch.addNode(node.getKey());
+    		tree.addNode(node.getKey());
     	}
     	
-    	bfs(root,ch, g);	//take two random nodes
-    	for(node_info node: ch.getV()) {
+    	bfs(root,tree, g);
+    	for(node_info node: tree.getV()) {
     		node.setTag(-1);  		// yet didn't visit him using in postOrderTraversal
     	}
-    	ch.getNode(root).setTag(0);	
+    	tree.getNode(root).setTag(0);	
     	LinkedList<Integer> list = new LinkedList<Integer>();
-    	postOrderTraveral(root,ch,list);  
+    	postOrderTraveral(root,tree,list);  
         return list;
     }
     
@@ -371,7 +371,7 @@ public class Brooks_Algo_Util {
 	 * and if havn't path to which node her tag will be with -1
 	 * the run time of this function is o(v+e)
 	 */
-	private void bfs(int src,weighted_graph ch, weighted_graph original) {
+	private void bfs(int src,weighted_graph tree, weighted_graph original) {
 		if(original.getV().isEmpty())								//check if it is empty graph
 			return;
 		
@@ -381,7 +381,7 @@ public class Brooks_Algo_Util {
 		Queue<Integer> queue=new LinkedList<Integer>();
 		queue.add(original.getNode(src).getKey());				//keep the key in the queue
 		original.getNode(src).setTag(0);				//the first node init with 0 										
-		ch.getNode(src).setTag(0);
+		tree.getNode(src).setTag(0);
 		
 		while(!queue.isEmpty()) {
 			Integer loc=queue.poll();
@@ -390,7 +390,7 @@ public class Brooks_Algo_Util {
 						if(key.getTag() == -1) {
 							queue.add(key.getKey());
 							key.setTag(original.getNode(loc).getTag()+1);			//if have neighbor update the the tag according to his parent
-							ch.connect(loc, key.getKey(), 0);
+							tree.connect(loc, key.getKey(), 0);
 						}
 				}
 			}
@@ -399,15 +399,15 @@ public class Brooks_Algo_Util {
 	/**
 	 * 
 	 * @param root - from to start the postorder traversal
-	 * @param ch - the new graph - spanning graph
+	 * @param tree - the new graph - spanning graph
 	 * @param list - list that contain the postroder traversal on the nodes
 	 */
-	public void postOrderTraveral(int root, weighted_graph ch,LinkedList<Integer> list) {
+	public void postOrderTraveral(int root, weighted_graph tree,LinkedList<Integer> list) {
 
-		for(node_info node: ch.getV(root)){ //move on all his neighbors
+		for(node_info node: tree.getV(root)){ //move on all his neighbors
 			if(node.getTag() == -1) {
 				node.setTag(0);
-				postOrderTraveral(node.getKey(), ch, list);
+				postOrderTraveral(node.getKey(), tree, list);
 			}
 		}
 		list.add(root);

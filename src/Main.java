@@ -15,7 +15,7 @@ public class Main {
             
             @Override
             public void run() {
-                Gui win = new Gui("HUNGARIAN - Algorithm Visualizer", new WGraph_DS());
+                Gui win = new Gui("GRAPH - Algorithm Visualizer", new WGraph_DS());
                 win.setVisible(true);
             }
         });
